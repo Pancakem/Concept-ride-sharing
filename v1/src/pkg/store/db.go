@@ -10,7 +10,7 @@ import (
 var db *sql.DB
 
 func init() {
-	d, err := sql.Open("sqlite3", "ubermoto.sqlite3")
+	d, err := sql.Open("sqlite3", "uber_moto.db")
 	if err != nil {
 		log.Fatal("Couldn't establish database connection:", err)
 	}

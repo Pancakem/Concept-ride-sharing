@@ -15,11 +15,6 @@ func GetARide(router *mux.Router) *mux.Router {
 			negroni.HandlerFunc(controller.BookRide),
 		))
 
-	// router.Handle(apiVersion+"/cancelride",
-	// 	negroni.New(
-	// 		negroni.HandlerFunc(auth.RequireTokenAuth),
-	// 		negroni.HandlerFunc(controller.BookRide),
-	// 	))
 	router.Handle(apiVersion+"/rides/driverlocation",
 		negroni.New(
 			negroni.HandlerFunc(auth.RequireTokenAuth),

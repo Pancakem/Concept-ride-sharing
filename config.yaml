@@ -1,0 +1,10 @@
+mapKey : 
+host: localhost
+port: 5423
+user: postgres
+password: 9993Revilo!
+dbname: 
+sslmode: disable
+logurl: logfile
+
+

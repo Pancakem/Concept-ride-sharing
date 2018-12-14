@@ -41,6 +41,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	distance := 5.0
 	// get eight drivers that are in range of 5, 10 15
 	// first try looks for 5
+	go hub.Read(rid)
 	for i := 0; i < 3; i++ {
 		cli := store.GetRedisClient()
 		dls := cli.SearchDrivers(8, rr.Origin.Lat, rr.Origin.Lng, distance)
@@ -52,7 +53,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			SendRideRequest(ThisRequest, conn)
-			go conn.Read(rid)
+
 			timer := time.NewTimer(time.Second * 15)
 			select {
 			case <-timer.C:

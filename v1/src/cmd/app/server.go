@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/pancakem/rides/v1/src/pkg/route"
@@ -8,5 +9,7 @@ import (
 
 func main() {
 	router := route.InitRouter()
-	http.ListenAndServe(":4000", router)
+	log.Println("Listening at port 4000")
+	log.Fatal(http.ListenAndServe(":4000", router))
+
 }
