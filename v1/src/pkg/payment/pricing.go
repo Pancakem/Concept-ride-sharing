@@ -8,11 +8,18 @@ import (
 // ride cost constants are stored in a file
 const filename = "pricing.json"
 
+// Price initializes at start time
+var Price Pricing
+
 // Pricing has the constants needed to calculate prices
 type Pricing struct {
 	BaseFare float64 `json:"base_fare"`
-	Time     float64 `json:"time"`
-	Distance float64 `json:"distance"`
+	Time     float64 `json:"time"`     // time in minutes
+	Distance float64 `json:"distance"` // distance in kilometer
+}
+
+func init() {
+	Price.Load()
 }
 
 // Load gets the values for pricing

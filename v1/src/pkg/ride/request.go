@@ -2,6 +2,7 @@ package ride
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,33 +16,67 @@ var (
 	upgrader    = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
 	}
 )
 
 // Match will pair a driver and a rider
 func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	var rr *store.RideRequest
+	// when written to this channel send data to the rider
+	// for low priority data
+	send := make(chan []byte)
+	var rr store.RideRequest
+	riderdata := make(chan map[string]interface{})
 	rid := make(chan *store.MatchResponse)
 	rider, err := upgrader.Upgrade(w, r, nil)
+
 	if err != nil {
 		http.Error(w, "Error making request", 500)
 	}
+	go func() {
+		// read the first only request data
+		for {
+			ma := make(map[string]interface{})
+			err = rider.ReadJSON(ma)
+			if err != nil {
+				http.Error(w, "Couldn't parse data", 406)
+				continue
+			}
 
-	// read the request data
-	err = rider.ReadJSON(rr)
-	if err != nil {
-		http.Error(w, "Couldn't parse data", 406)
-	}
+			riderdata <- ma
+		}
+
+	}()
+
+	go func() {
+		for {
+			select {
+			case data := <-send:
+				rider.WriteMessage(2, data)
+			case x := <-riderdata:
+				switch x["type"].(string) {
+				case "cancelled":
+					riderCancel(x["id"].(string), x["time"].(float64), x["distance"].(float64), hub, send)
+				case "request":
+					dta, _ := json.Marshal(x)
+					json.Unmarshal(dta, &rr)
+				}
+			}
+		}
+
+	}()
+
+	fmt.Println(rr)
 
 	// the ride consists of rider details sent to the driver
-	ThisRequest := NewDriverRequest(rr)
-
-	// use their id to get corresponding writers from the store
+	ThisRequest := NewDriverRequest(&rr)
 
 	distance := 5.0
 	// get eight drivers that are in range of 5, 10 15
 	// first try looks for 5
-	go hub.Read(rid)
+	go hub.Read(rid, send)
 	for i := 0; i < 3; i++ {
 		cli := store.GetRedisClient()
 		dls := cli.SearchDrivers(8, rr.Origin.Lat, rr.Origin.Lng, distance)
@@ -61,7 +96,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			case accepted := <-rid:
 				// write to the rider the acceptance of their request
 				data, _ := json.Marshal(accepted)
-				conn.send <- data
+				rider.WriteMessage(2, data)
 				break
 			}
 

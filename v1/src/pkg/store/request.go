@@ -5,56 +5,130 @@ import (
 )
 
 // Request is the finalized data about a completed or not ride
-type request struct {
+type Request struct {
 	ID          string     `db:"id"`
-	CreateDate  *time.Time `db:"create_time"`
 	DriverID    string     `db:"driver"`
 	RiderID     string     `db:"rider"`
-	Origin      string     `db:"origin"`
-	Destination string     `db:"destination"`
-	ActualPrice float32    `db:"actualprice"`
+	Origin      LatLng     `db:"origin"`
+	Destination LatLng     `db:"destination"`
+	ActualPrice float32    `db:"actual_price"`
 	Completed   bool       `db:"completed"`
-	Ratings     float32    `db:"rating"`
+	RideTime    float64    `db:"ride_time"` // ride time in seconds
+	CreateDate  *time.Time `db:"create_time"`
 	AverageTime *time.Time `db:"average_time_of_booking"`
-	Canceled    bool       `db:"canceled"`
 }
 
-// Create commits a ride request into the database
-func Create(reques *RideRequest, requestid string) error {
-	// decode auth key for rider id
-	// use googlemaps api to get current location name and destination name
-	r := &request{ID: requestid}
-	return create(r)
+// Create commits a ride Request into the database
+func Create(reques *RideRequest, driverid, requestid string) error {
+	req := &Request{
+		ID:          requestid,
+		DriverID:    driverid,
+		RiderID:     reques.RiderID,
+		Origin:      reques.Origin,
+		Destination: reques.Destination,
+		Completed:   false,
+	}
+	err := createPlace(req)
+	err = createRequest(req)
+	return err
 }
-func create(r *request) error {
-	stmt, err := db.Prepare("INSERT * INTO request")
+
+// writes to Request table
+func createRequest(r *Request) error {
+	// insert into Request table
+	sql := `INSERT INTO request
+	id, 
+	driverid,
+	riderid,
+	completed, 
+	`
+
+	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
 	}
-
-	_, err = stmt.Exec(r)
+	_, err = stmt.Exec(r.ID, r.DriverID, r.RiderID, r.Completed)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func read(r *request) error {
-	row := db.QueryRow("SELECT * FROM request where id=$1", r.ID)
-	return row.Scan(&r)
-}
-
-// repair
-func update(r *request) error {
-	stmt, err := db.Prepare("UPDATE request SET * WHERE id=?")
+// writes to place table
+func createPlace(r *Request) error {
+	sql := `INSERT INTO place
+	id, 
+	origin_name,
+	origin_latitude,
+	origin_longitude,
+	destination_name,
+	destination_latitude,
+	destination_longitude, 
+	`
+	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(&r)
+	_, err = stmt.Exec(r.ID, r.Origin.Lat, r.Origin.Lng, r.Origin.PlaceName,
+		r.Destination.Lat, r.Destination.Lng, r.Destination.PlaceName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func read(id string) *Request {
+	r := &Request{}
+
+	query := `SELECT 
+	request.driver, 
+	request.rider, 
+	request.completed, 
+	request.actual_price, 
+	request.create_time, 
+	request.average_time,
+	place.origin_name,
+	place.origin_latitude,
+	place.origin_longitude,
+	place.destination_name,
+	place.destination_latitude,
+	place.destination_longitude
+	FROM request
+	FULL OUTER JOIN place ON request.id=place.id;
+	`
+	row := db.QueryRow(query, id)
+	err := row.Scan(r.DriverID, r.RiderID, r.Completed,
+		r.ActualPrice, r.CreateDate, r.AverageTime,
+		r.Origin.PlaceName, r.Origin.Lat, r.Origin.Lng,
+		r.Destination.PlaceName, r.Destination.Lat, r.Destination.Lng,
+	)
+	if err != nil {
+		return nil
+	}
+
+	return r
+}
+
+// Read the database
+func Read(id string) *Request {
+	return read(id)
+}
+
+// repair
+func update(id string, ridetime float64, price float64, status bool) error {
+	sql := `UPDATE request SET 
+	completed=$1
+	actual_price=$2
+	ride_time=$3
+	WHERE id=$4`
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(status, price, ridetime, id)
 	return err
 }
 
-func updateRating(reqID string, rating float32) error {
-	_, err := db.Exec("UPDATE request SET rating=$1 where id=$2", rating, reqID)
-	return err
+// Update the request when its done
+func Update(id string, ridetime float64, price float64, status bool) error {
+	return update(id, ridetime, price, status)
 }

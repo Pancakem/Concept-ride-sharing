@@ -24,7 +24,7 @@ func NewClient(c *websocket.Conn) *Client {
 	}
 }
 
-func (h *Hub) Read(rid chan *store.MatchResponse) {
+func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 
 	for _, c := range h.clients {
 		c.conn.SetReadLimit(maxMessageSize)
@@ -63,15 +63,9 @@ func (h *Hub) Read(rid chan *store.MatchResponse) {
 						Driver: *d,
 					}
 				case "cancelled":
-					// cancelled should contain ride id and driver id
-					// help relieve the server from a lot of work
-					// write to database that the ride is cancelled
-					// if ride was already started a price calculation is done
-					// and sent along side cancellation request
-					// send a signal to driver app
-					// conn := hub.C
-					ma := make(map[string]string)
-					ma["type"] = "cancelled"
+					// cancelled should contain ride id
+					driverCancel(ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an)
+					c.send <- <-an
 
 				}
 			}(message)
@@ -81,6 +75,8 @@ func (h *Hub) Read(rid chan *store.MatchResponse) {
 
 }
 
+// Send any data written to send channel to driver
+// for low priority  data
 func (c *Client) Send() {
 	for {
 		select {
