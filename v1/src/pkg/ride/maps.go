@@ -52,8 +52,3 @@ func InRange(l *store.LatLng, dl *store.DriverLocation, dur int) error {
 	}
 	return nil
 }
-
-// // LocationName uses the google maps api to get the names of places given coordinates
-// func LocationName(location string) {
-
-// }

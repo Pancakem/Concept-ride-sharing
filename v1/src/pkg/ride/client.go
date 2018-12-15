@@ -37,38 +37,41 @@ func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 				}
 				break
 			}
-			func(message []byte) {
 
-				ma := make(map[string]interface{})
-				json.Unmarshal(message, &ma)
+			ma := make(map[string]interface{})
+			json.Unmarshal(message, &ma)
 
-				switch ma["type"] {
-				case "driverlocation":
-					dl := &store.DriverLocation{}
-					json.Unmarshal(message, dl)
-					saveToDB(dl)
-				case "accepted":
-					// when a ride is accepted
-					// the driver details are found out
-					// and his/her location
-					// this data is sent to the rider channel which
-					// will trigger the send response to them
-					acc := &store.Accepted{}
-					json.Unmarshal(message, acc)
-					d := &model.Driver{ID: acc.DriverID}
-					d.GetByID()
+			switch ma["type"] {
+			case "driverlocation":
+				dl := &store.DriverLocation{}
+				json.Unmarshal(message, dl)
+				saveToDB(dl)
+			case "accepted":
+				// when a ride is accepted
+				// the driver details are found out
+				// and his/her location
+				// this data is sent to the rider channel which
+				// will trigger the send response to them
+				acc := &store.Accepted{}
+				json.Unmarshal(message, acc)
+				d := &model.Driver{ID: acc.DriverID}
+				d.GetByID()
 
-					rid <- &store.MatchResponse{
-						LatLng: acc.Location,
-						Driver: *d,
-					}
-				case "cancelled":
-					// cancelled should contain ride id
-					driverCancel(ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an)
-					c.send <- <-an
-
+				rid <- &store.MatchResponse{
+					LatLng: acc.Location,
+					Driver: *d,
 				}
-			}(message)
+			case "cancelled":
+				// cancelled should contain ride id
+				finished(ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, false)
+				c.send <- <-an
+			case "finished":
+				finished(ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, true)
+
+			case "rating":
+				store.AddRiderRating(ma["id"].(string), ma["rating"].(float32))
+
+			}
 
 		}
 	}

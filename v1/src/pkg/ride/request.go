@@ -2,7 +2,6 @@ package ride
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -35,8 +34,8 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Error making request", 500)
 	}
+	// read from rider
 	go func() {
-		// read the first only request data
 		for {
 			ma := make(map[string]interface{})
 			err = rider.ReadJSON(ma)
@@ -44,7 +43,6 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Couldn't parse data", 406)
 				continue
 			}
-
 			riderdata <- ma
 		}
 
@@ -62,17 +60,17 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				case "request":
 					dta, _ := json.Marshal(x)
 					json.Unmarshal(dta, &rr)
+				case "rating":
+					store.AddDriverRating(x["id"].(string), x["rating"].(float32))
 				}
 			}
 		}
 
 	}()
 
-	fmt.Println(rr)
-
 	// the ride consists of rider details sent to the driver
 	ThisRequest := NewDriverRequest(&rr)
-
+	// the first range of distance to try
 	distance := 5.0
 	// get eight drivers that are in range of 5, 10 15
 	// first try looks for 5

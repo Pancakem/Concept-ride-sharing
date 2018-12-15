@@ -24,3 +24,9 @@ CREATE TABLE place (
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES request(id),
 ); 
+
+CREATE TABLE rating (
+    rideid VARCHAR NOT NULL,
+    riderrating REAL,
+    driverrating REAL,
+);
