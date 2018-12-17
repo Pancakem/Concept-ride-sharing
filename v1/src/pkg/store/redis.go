@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	key    = "drivers"
+	key = "drivers"
 )
 
 var once sync.Once
@@ -24,7 +24,7 @@ type RedisClient struct {
 func GetRedisClient() *RedisClient {
 	once.Do(func() {
 		client := redis.NewClient(&redis.Options{
-			Addr:     "0.0.0.0:6379",
+			Addr:     "0.0.0.0:32768",
 			Password: "",
 			DB:       0, // using the default database
 		})

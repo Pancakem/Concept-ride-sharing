@@ -12,7 +12,7 @@ import (
 
 // ThisRequest is the request to be used
 var (
-	upgrader    = websocket.Upgrader{
+	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
@@ -100,7 +100,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				case accepted := <-rid:
 					// write to the rider the acceptance of their request
 					data, _ := json.Marshal(accepted)
-					accepted.ETA = ETA(&rr.Origin, &store.LatLng{Lat:accepted.Lat, Lng:accepted.Lng})
+					accepted.ETA = ETA(&rr.Origin, &store.LatLng{Lat: accepted.Lat, Lng: accepted.Lng})
 					rider.WriteMessage(2, data)
 					conn.booked = true
 					// write  to database
@@ -111,7 +111,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		select {
-		case <- c:
+		case <-c:
 			break
 		default:
 			distance += 5
@@ -120,6 +120,4 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	}
 
-
 }
-

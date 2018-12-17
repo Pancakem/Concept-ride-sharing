@@ -1,11 +1,12 @@
 package ride
 
 import (
-	"github.com/pancakem/swoop-rides-service/v1/src/pkg/model"
 	"log"
 
+	"github.com/pancakem/user-service/v1/src/pkg/model"
+
 	"github.com/pancakem/rides/v1/src/pkg/store"
-	"github.com/pancakem/swoop-rides-service/v1/src/pkg/common"
+	"github.com/pancakem/user-service/v1/src/pkg/common"
 )
 
 // NewDriverRequest creates a driver request for the job queue
@@ -25,9 +26,9 @@ func NewDriverRequest(r *store.RideRequest) *store.DriverRequest {
 // SendRideRequest encodes and sends a driver
 func SendRideRequest(dr *store.DriverRequest, riderid string, w *Client) {
 	// create a rider instance to get data from db
-	x := model.Rider{ID:riderid}
+	x := model.Rider{ID: riderid}
 	x.GetByID()
-	
+
 	ma := make(map[string]interface{})
 	ma["id"] = dr.RequestID
 	ma["name"] = x.FullName

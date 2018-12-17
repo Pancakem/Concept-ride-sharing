@@ -1,32 +1,29 @@
 CREATE TABLE request (  
-    id VARCHAR NOT NULL PRIMARY KEY,
-    driverid VARCHAR NOT NULL ,
-    riderid VARCHAR NOT NULL,
+    id VARCHAR (50) NOT NULL PRIMARY KEY,
+    driverid VARCHAR (50) NOT NULL ,
+    riderid VARCHAR (50) NOT NULL,
     actual_price REAL,
     completed BOOLEAN NOT NULL,
-    ride_time VARCHAR,
+    ride_time VARCHAR (50),
     distance REAL,
-    -- how long it takes to match
-    average_time DATETIME, 
-    create_date DATETIME default now,
+    average_time VARCHAR (50), 
+    create_date VARCHAR (50)
 );
 
 CREATE TABLE place (
-    id VARCHAR NOT NULL,
-    -- ORIGIN
-    origin_name VARCHAR,
+    id VARCHAR NOT NULL PRIMARY KEY ,
+    origin_name VARCHAR (50),
     origin_latitude REAL,
     origin_longitude REAL,
-    -- DESTINATION
-    destination_name VARCHAR,
+    destination_name VARCHAR (50),
     destination_latitude REAL,
     destination_longitude REAL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES request(id),
+    
+    FOREIGN KEY (id) REFERENCES request (id)
 ); 
 
-CREATE TABLE rating (
-    rideid VARCHAR NOT NULL,
+CREATE TABLE ratings (
+    rideid VARCHAR (50) NOT NULL,
     riderrating REAL,
-    driverrating REAL,
+    driverrating REAL
 );

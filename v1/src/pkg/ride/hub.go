@@ -3,10 +3,11 @@ package ride
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+
 	"github.com/gorilla/websocket"
 	"github.com/pancakem/rides/v1/src/pkg/store"
-	"github.com/pancakem/swoop-rides-service/v1/src/pkg/model"
-	"log"
+	"github.com/pancakem/user-service/v1/src/pkg/model"
 )
 
 // Hub stores active drivers by their connections
@@ -70,7 +71,7 @@ func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 					if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 						// unregister the client from hub
 						h.unregister <- &aggreg{
-							id: key,
+							id:     key,
 							Client: c,
 						}
 						// delete location from redis
@@ -107,14 +108,14 @@ func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 					}
 
 					rid <- &store.MatchResponse{
-						Type: "accepted",
-						LatLng: acc.Location,
-						Name: d.FullName,
-						PhoneNumber:d.Phonenumber,
-						ImageURL: d.ProfileImage,
-						VehicleColor:d.Vehicle.Color,
-						VehicleModel:d.Vehicle.Model,
-						VehiclePlate:d.Vehicle.PlateNumber,
+						Type:         "accepted",
+						LatLng:       acc.Location,
+						Name:         d.FullName,
+						PhoneNumber:  d.Phonenumber,
+						ImageURL:     d.ProfileImage,
+						VehicleColor: d.Vehicle.Color,
+						VehicleModel: d.Vehicle.Model,
+						VehiclePlate: d.Vehicle.PlateNumber,
 					}
 				case "cancelled":
 					// cancelled should contain ride id
@@ -135,7 +136,5 @@ func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 		}
 
 	}
-
-
 
 }
