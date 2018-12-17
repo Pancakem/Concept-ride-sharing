@@ -52,3 +52,33 @@ func InRange(l *store.LatLng, dl *store.DriverLocation, dur int) error {
 	}
 	return nil
 }
+
+
+func ETA(origin *store.LatLng, destination *store.LatLng) float64 {
+	client := http.Client{Timeout: time.Second * 5}
+	key := ""
+	mapURL := "http://maps.googleapis.com/maps/api/directions/json?origin=" + conv(origin.Lat) + "," + conv(origin.Lng) + "&destination=" + conv(destination.Lat) + "," + conv(destination.Lng) + "&sensor=false&units=metric&mode=driving&key=" + key
+
+	req, err := http.NewRequest("GET", mapURL, nil)
+	if err != nil {
+		// by returning err we move to the next driver
+		// this sacrifice might save us time and we can get the next driver
+		// the driver maybe placed in failed job queue for a next trial
+		return 0.0
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return 0.0
+	}
+	values := val{}
+
+	err = json.NewDecoder(resp.Body).Decode(&values)
+	if err != nil {
+		return 0.0
+	}
+	defer resp.Body.Close()
+	tInt := values.Time["value"]
+	duration := tInt
+	return float64(duration / 60)
+}

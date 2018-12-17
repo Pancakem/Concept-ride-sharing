@@ -49,4 +49,5 @@ type MatchResponse struct {
 	VehicleModel string `json:"vehicle_model"`
 	VehicleColor string `json:"vehicle_color"`
 	VehiclePlate string `json:"vehicle_plate"`
+	ETA float64 `json:"ETA"`
 }

@@ -6,7 +6,7 @@ import "log"
 func AddDriverRating(rideid string, rating float32) error {
 
 	sql := `INSERT INTO rating rideid, driverrating
-	VALUES(?,?)`
+	VALUES($1,$2)`
 
 	stmt, err := db.Prepare(sql)
 	if err != nil {
@@ -20,7 +20,7 @@ func AddDriverRating(rideid string, rating float32) error {
 func AddRiderRating(rideid string, rating float32) error {
 
 	sql := `INSERT INTO rating rideid, riderrating
-	VALUES(?,?)`
+	VALUES($1,$2)`
 
 	stmt, err := db.Prepare(sql)
 	if err != nil {

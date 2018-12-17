@@ -12,7 +12,6 @@ import (
 
 // ThisRequest is the request to be used
 var (
-	ThisRequest *store.DriverRequest
 	upgrader    = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -91,7 +90,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 			go conn.Send()
-			SendRideRequest(ThisRequest, conn)
+			SendRideRequest(ThisRequest, rr.RiderID, conn)
 
 			timer := time.NewTimer(time.Second * 15)
 			select {
@@ -100,6 +99,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			case accepted := <-rid:
 				// write to the rider the acceptance of their request
 				data, _ := json.Marshal(accepted)
+				accepted.ETA = ETA(&rr.Origin, &store.LatLng{Lat:accepted.Lat, Lng:accepted.Lng})
 				rider.WriteMessage(2, data)
 				// write  to database
 				store.Create(ThisRequest, val.Name, rr.RiderID)
@@ -120,6 +120,3 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 }
 
-// spawn a go routine that will always listen for connection from the user and also
-// another to write current location to the to the rider as the driver approaches
-// when drive starts the

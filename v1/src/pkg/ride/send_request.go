@@ -1,6 +1,7 @@
 package ride
 
 import (
+	"github.com/pancakem/swoop-rides-service/v1/src/pkg/model"
 	"log"
 
 	"github.com/pancakem/rides/v1/src/pkg/store"
@@ -22,6 +23,15 @@ func NewDriverRequest(r *store.RideRequest) *store.DriverRequest {
 }
 
 // SendRideRequest encodes and sends a driver
-func SendRideRequest(dr *store.DriverRequest, w *Client) {
-	w.conn.WriteJSON(dr)
+func SendRideRequest(dr *store.DriverRequest, riderid string, w *Client) {
+	// create a rider instance to get data from db
+	x := model.Rider{ID:riderid}
+	x.GetByID()
+	ma := make(map[string]interface{})
+	ma["name"] = x.FullName
+	ma["phone_number"] = x.Phonenumber
+	ma["id"] = dr.RequestID
+	ma["origin"] = dr.Origin
+	ma["destination"] = dr.Origin
+	w.conn.WriteJSON(ma)
 }
