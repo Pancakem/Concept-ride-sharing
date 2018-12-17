@@ -83,6 +83,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		cli := store.GetRedisClient()
 		dls := cli.SearchDrivers(8, rr.Origin.Lat, rr.Origin.Lng, distance)
 		c := make(chan bool) // record accepted to exit outer loop
+
 		// send those drivers the request
 		for _, val := range dls {
 			conn := hub.Check(val.Name)
@@ -101,6 +102,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				data, _ := json.Marshal(accepted)
 				rider.WriteMessage(2, data)
 				// write  to database
+				store.Create(ThisRequest, val.Name, rr.RiderID)
 				break
 			}
 

@@ -19,11 +19,11 @@ type Request struct {
 }
 
 // Create commits a ride Request into the database
-func Create(reques *RideRequest, driverid, requestid string) error {
+func Create(reques *DriverRequest, driverid, riderid string) error {
 	req := &Request{
-		ID:          requestid,
+		ID:          reques.RequestID,
 		DriverID:    driverid,
-		RiderID:     reques.RiderID,
+		RiderID:     riderid,
 		Origin:      reques.Origin,
 		Destination: reques.Destination,
 		Completed:   false,
@@ -40,7 +40,8 @@ func createRequest(r *Request) error {
 	id, 
 	driverid,
 	riderid,
-	completed, 
+	completed,
+  	VALUES($1, $2, $3, $4)
 	`
 
 	stmt, err := db.Prepare(sql)
