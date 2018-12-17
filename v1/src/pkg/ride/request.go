@@ -89,23 +89,26 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			if conn == nil {
 				continue
 			}
-			go conn.Send()
-			SendRideRequest(ThisRequest, rr.RiderID, conn)
+			if !conn.booked {
+				go conn.Send()
+				SendRideRequest(ThisRequest, rr.RiderID, conn)
 
-			timer := time.NewTimer(time.Second * 15)
-			select {
-			case <-timer.C:
-				continue
-			case accepted := <-rid:
-				// write to the rider the acceptance of their request
-				data, _ := json.Marshal(accepted)
-				accepted.ETA = ETA(&rr.Origin, &store.LatLng{Lat:accepted.Lat, Lng:accepted.Lng})
-				rider.WriteMessage(2, data)
-				// write  to database
-				store.Create(ThisRequest, val.Name, rr.RiderID)
-				break
+				timer := time.NewTimer(time.Second * 15)
+				select {
+				case <-timer.C:
+					continue
+				case accepted := <-rid:
+					// write to the rider the acceptance of their request
+					data, _ := json.Marshal(accepted)
+					accepted.ETA = ETA(&rr.Origin, &store.LatLng{Lat:accepted.Lat, Lng:accepted.Lng})
+					rider.WriteMessage(2, data)
+					conn.booked = true
+					// write  to database
+					store.Create(ThisRequest, val.Name, rr.RiderID)
+					break
+				}
+
 			}
-
 		}
 		select {
 		case <- c:

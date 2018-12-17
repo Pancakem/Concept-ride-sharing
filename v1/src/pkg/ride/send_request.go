@@ -27,11 +27,13 @@ func SendRideRequest(dr *store.DriverRequest, riderid string, w *Client) {
 	// create a rider instance to get data from db
 	x := model.Rider{ID:riderid}
 	x.GetByID()
+	
 	ma := make(map[string]interface{})
+	ma["id"] = dr.RequestID
 	ma["name"] = x.FullName
 	ma["phone_number"] = x.Phonenumber
-	ma["id"] = dr.RequestID
 	ma["origin"] = dr.Origin
 	ma["destination"] = dr.Origin
+
 	w.conn.WriteJSON(ma)
 }

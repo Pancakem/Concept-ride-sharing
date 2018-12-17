@@ -15,6 +15,7 @@ var maxMessageSize int64 = 512
 type Client struct {
 	conn *websocket.Conn
 	send chan []byte
+	booked bool
 }
 
 // NewClient returns a client instance
@@ -86,9 +87,12 @@ func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 				case "cancelled":
 					// cancelled should contain ride id
 					finished("cancelled", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, false)
+					c.booked = false
 					c.send <- <-an
 				case "finished":
 					finished("finished", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, true)
+					c.booked = false
+					c.send <- <-an
 
 				case "rating":
 					store.AddRiderRating(ma["id"].(string), ma["rating"].(float32))
