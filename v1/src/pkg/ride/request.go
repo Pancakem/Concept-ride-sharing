@@ -2,6 +2,7 @@ package ride
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -36,9 +37,11 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	// read from rider
 	go func() {
+		fmt.Println("Started anonymous 1 read from rider")
 		for {
 			ma := make(map[string]interface{})
 			err = rider.ReadJSON(ma)
+			fmt.Println(ma)
 			if err != nil {
 				http.Error(w, "Couldn't parse data", 406)
 				continue
@@ -49,6 +52,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}()
 
 	go func() {
+		fmt.Println("Started anonymous 2 performs actions based on rider reads")
 		for {
 			select {
 			case data := <-send:
@@ -78,13 +82,14 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < 3; i++ {
 		cli := store.GetRedisClient()
 		dls := cli.SearchDrivers(8, rr.Origin.Lat, rr.Origin.Lng, distance)
+
 		// send those drivers the request
 		for _, val := range dls {
 			conn := hub.Check(val.Name)
-			go conn.Send()
 			if conn == nil {
 				continue
 			}
+			go conn.Send()
 			SendRideRequest(ThisRequest, conn)
 
 			timer := time.NewTimer(time.Second * 15)
@@ -101,6 +106,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		}
 		distance += 5
 	}
+
 
 }
 

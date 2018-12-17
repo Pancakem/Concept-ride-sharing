@@ -33,11 +33,11 @@ func riderCancel(rideid string, time float64, distance float64, hub *Hub, an cha
 
 }
 
-func finished(rideid string, time float64, distance float64, an chan []byte, status bool) {
+func finished(type_, rideid string, time float64, distance float64, an chan []byte, status bool) {
 	// calculate the ride amount
 	price := payment.Price.Calculate(time/60, distance)
 	ma := make(map[string]interface{})
-	ma["type"] = "cancelled"
+	ma["type"] = type_
 	ma["price"] = price
 
 	// write to channel cancelled and trigger a send json to rider writer

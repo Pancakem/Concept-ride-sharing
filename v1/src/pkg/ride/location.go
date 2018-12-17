@@ -1,6 +1,7 @@
 package ride
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/pancakem/rides/v1/src/pkg/store"
@@ -17,6 +18,10 @@ func GetLocation(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	dl := &store.DriverLocation{}
 
 	client.conn.ReadJSON(dl)
+	fmt.Println(dl.DriverID)
+	fmt.Println(dl.Location)
+
+	go hub.run()
 
 	rediscli := store.GetRedisClient()
 	rediscli.AddDriverLocation(dl)

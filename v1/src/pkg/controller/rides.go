@@ -8,6 +8,10 @@ import (
 
 var hub *ride.Hub
 
+func init() {
+	hub = ride.NewHub()
+}
+
 // BookRide allows the rider to request a ride
 func BookRide(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	ride.Match(hub, w, r)
@@ -15,6 +19,5 @@ func BookRide(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 // GetLocation takes locations of drivers
 func GetLocation(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	hub = ride.NewHub()
 	ride.GetLocation(hub, w, r)
 }

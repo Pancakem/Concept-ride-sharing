@@ -31,13 +31,13 @@ type DriverRequest struct {
 
 // Accepted request
 type Accepted struct {
-	DriverID string `json:"id"`
+	DriverID string `json:"driver_id"`
 	Location LatLng `json:"location"`
 }
 
 // DriverLocation wrapper
 type DriverLocation struct {
-	DriverID string `json:"id"`
+	DriverID string `json:"driver_id"`
 	Location LatLng `json:"location"`
 }
 

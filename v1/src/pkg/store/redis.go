@@ -1,6 +1,7 @@
 package store
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -9,7 +10,6 @@ import (
 
 const (
 	key    = "drivers"
-	conHub = "connection" // store the connection hub
 )
 
 var once sync.Once
@@ -24,7 +24,7 @@ type RedisClient struct {
 func GetRedisClient() *RedisClient {
 	once.Do(func() {
 		client := redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
+			Addr:     "0.0.0.0:6379",
 			Password: "",
 			DB:       0, // using the default database
 		})
@@ -43,6 +43,7 @@ func (c *RedisClient) AddDriverLocation(dl *DriverLocation) {
 		key,
 		&redis.GeoLocation{Longitude: dl.Location.Lng, Latitude: dl.Location.Lat, Name: dl.DriverID},
 	)
+	fmt.Println("added")
 }
 
 // RemoveDriverLocation from cache

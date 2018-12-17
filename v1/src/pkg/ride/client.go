@@ -2,11 +2,10 @@ package ride
 
 import (
 	"encoding/json"
-
+	"fmt"
+	"github.com/gorilla/websocket"
 	"github.com/pancakem/rides/v1/src/pkg/store"
 	"github.com/pancakem/swoop-rides-service/v1/src/pkg/model"
-
-	"github.com/gorilla/websocket"
 )
 
 var maxMessageSize int64 = 512
@@ -25,62 +24,76 @@ func NewClient(c *websocket.Conn) *Client {
 }
 
 func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
+	fmt.Println("started h.Read")
+	cli := store.GetRedisClient()
+	if len(h.clients) > 0 {
+		for key, c := range h.clients {
+			c.conn.SetReadLimit(maxMessageSize)
 
-	for _, c := range h.clients {
-		c.conn.SetReadLimit(maxMessageSize)
+			for {
+				_, message, err := c.conn.ReadMessage()
+				if err != nil {
+					if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+						// unregister the client from hub
+						h.unregister <- &aggreg{
+							id: key,
+							Client: c,
+						}
+						// delete location from redis
+						cli.RemoveDriverLocation(key)
 
-		for {
-			_, message, err := c.conn.ReadMessage()
-			if err != nil {
-				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-					// unregister the client from hub
+					}
+					break
 				}
-				break
-			}
 
-			ma := make(map[string]interface{})
-			json.Unmarshal(message, &ma)
+				ma := make(map[string]interface{})
+				json.Unmarshal(message, &ma)
 
-			switch ma["type"] {
-			case "driverlocation":
-				dl := &store.DriverLocation{}
-				json.Unmarshal(message, dl)
-				saveToDB(dl)
-			case "accepted":
-				// when a ride is accepted
-				// the driver details are found out
-				// and his/her location
-				// this data is sent to the rider channel which
-				// will trigger the send response to them
-				acc := &store.Accepted{}
-				json.Unmarshal(message, acc)
-				d := &model.Driver{ID: acc.DriverID}
-				d.GetByID()
+				switch ma["type"] {
+				case "driverlocation":
+					dl := &store.DriverLocation{}
+					json.Unmarshal(message, dl)
+					saveToDB(dl)
+				case "accepted":
+					// when a ride is accepted
+					// the driver details are found out
+					// and his/her location
+					// this data is sent to the rider channel which
+					// will trigger the send response to them
+					acc := &store.Accepted{}
+					json.Unmarshal(message, acc)
+					d := &model.Driver{ID: acc.DriverID}
+					d.GetByID()
 
-				rid <- &store.MatchResponse{
-					LatLng: acc.Location,
-					Driver: *d,
+					rid <- &store.MatchResponse{
+						LatLng: acc.Location,
+						Driver: *d,
+					}
+				case "cancelled":
+					// cancelled should contain ride id
+					finished("cancelled", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, false)
+					c.send <- <-an
+				case "finished":
+					finished("finished", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, true)
+
+				case "rating":
+					store.AddRiderRating(ma["id"].(string), ma["rating"].(float32))
+
 				}
-			case "cancelled":
-				// cancelled should contain ride id
-				finished(ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, false)
-				c.send <- <-an
-			case "finished":
-				finished(ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, true)
-
-			case "rating":
-				store.AddRiderRating(ma["id"].(string), ma["rating"].(float32))
 
 			}
-
 		}
+
 	}
+
+
 
 }
 
 // Send any data written to send channel to driver
 // for low priority  data
 func (c *Client) Send() {
+	fmt.Println("Started c.Send")
 	for {
 		select {
 		case data := <-c.send:

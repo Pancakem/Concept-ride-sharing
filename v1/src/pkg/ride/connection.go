@@ -1,5 +1,7 @@
 package ride
 
+import "fmt"
+
 // Hub stores active drivers by their connections
 type Hub struct {
 	// connected clients (mostly drivers)
@@ -34,6 +36,7 @@ func (h *Hub) Check(driverid string) *Client {
 
 // run adds connections to hub and also removes them
 func (h *Hub) run() {
+	fmt.Println("Started h.Run")
 	for {
 		select {
 		case client := <-h.register:
