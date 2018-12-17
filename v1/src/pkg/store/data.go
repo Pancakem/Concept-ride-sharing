@@ -1,7 +1,5 @@
 package store
 
-import "github.com/pancakem/swoop-rides-service/v1/src/pkg/model"
-
 // LatLng represents a location onnthe surface of earth
 type LatLng struct {
 	Lat       float64 `json:"lat"`
@@ -12,7 +10,7 @@ type LatLng struct {
 // RideRequest takes in the json
 type RideRequest struct {
 	// rider_id key
-	RiderID string `json:"riderid"`
+	RiderID string `json:"rider_id"`
 	// origin coordinates
 	Origin LatLng `json:"origin"`
 	// destination coordinates
@@ -43,6 +41,12 @@ type DriverLocation struct {
 
 // MatchResponse wrapper
 type MatchResponse struct {
-	LatLng
-	model.Driver
+	Type string `json:"type"`
+	LatLng `json:"location"`
+	Name string `json:"name"`
+	PhoneNumber string `json:"phone_number"`
+	ImageURL string `json:"image_url"`
+	VehicleModel string `json:"vehicle_model"`
+	VehicleColor string `json:"vehicle_color"`
+	VehiclePlate string `json:"vehicle_plate"`
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/pancakem/rides/v1/src/pkg/store"
 	"github.com/pancakem/swoop-rides-service/v1/src/pkg/model"
+	"log"
 )
 
 var maxMessageSize int64 = 512
@@ -63,11 +64,24 @@ func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 					acc := &store.Accepted{}
 					json.Unmarshal(message, acc)
 					d := &model.Driver{ID: acc.DriverID}
-					d.GetByID()
+					err := d.GetByID()
+					if err != nil {
+						log.Println((err))
+					}
+					err = d.Vehicle.Get()
+					if err != nil {
+						log.Println((err))
+					}
 
 					rid <- &store.MatchResponse{
+						Type: "accepted",
 						LatLng: acc.Location,
-						Driver: *d,
+						Name: d.FullName,
+						PhoneNumber:d.Phonenumber,
+						ImageURL: d.ProfileImage,
+						VehicleColor:d.Vehicle.Color,
+						VehicleModel:d.Vehicle.Model,
+						VehiclePlate:d.Vehicle.PlateNumber,
 					}
 				case "cancelled":
 					// cancelled should contain ride id
