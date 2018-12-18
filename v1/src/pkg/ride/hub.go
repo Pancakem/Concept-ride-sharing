@@ -2,12 +2,9 @@ package ride
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 
 	"github.com/gorilla/websocket"
 	"github.com/pancakem/rides/v1/src/pkg/store"
-	"github.com/pancakem/user-service/v1/src/pkg/model"
 )
 
 // Hub stores active drivers by their connections
@@ -42,9 +39,8 @@ func (h *Hub) Check(driverid string) *Client {
 	return nil
 }
 
-// run adds connections to hub and also removes them
-func (h *Hub) run() {
-	fmt.Println("Started h.Run")
+// Run adds connections to hub and also removes them
+func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.register:
@@ -58,8 +54,7 @@ func (h *Hub) run() {
 	}
 }
 
-func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
-	fmt.Println("started h.Read")
+func (h *Hub) Read() {
 	cli := store.GetRedisClient()
 	if len(h.clients) > 0 {
 		for key, c := range h.clients {
@@ -89,52 +84,11 @@ func (h *Hub) Read(rid chan *store.MatchResponse, an chan []byte) {
 					dl := &store.DriverLocation{}
 					json.Unmarshal(message, dl)
 					saveToDB(dl)
-				case "accepted":
-					// when a ride is accepted
-					// the driver details are found out
-					// and his/her location
-					// this data is sent to the rider channel which
-					// will trigger the send response to them
-					acc := &store.Accepted{}
-					json.Unmarshal(message, acc)
-					d := &model.Driver{ID: acc.DriverID}
-					err := d.GetByID()
-					if err != nil {
-						log.Println((err))
-					}
-					err = d.Vehicle.Get()
-					if err != nil {
-						log.Println((err))
-					}
-
-					rid <- &store.MatchResponse{
-						Type:         "accepted",
-						LatLng:       acc.Location,
-						Name:         d.FullName,
-						PhoneNumber:  d.Phonenumber,
-						ImageURL:     d.ProfileImage,
-						VehicleColor: d.Vehicle.Color,
-						VehicleModel: d.Vehicle.Model,
-						VehiclePlate: d.Vehicle.PlateNumber,
-					}
-				case "cancelled":
-					// cancelled should contain ride id
-					finished("cancelled", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, false)
-					c.booked = false
-					c.send <- <-an
-				case "finished":
-					finished("finished", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, true)
-					c.booked = false
-					c.send <- <-an
-
-				case "rating":
-					store.AddRiderRating(ma["id"].(string), ma["rating"].(float32))
-
 				}
 
 			}
-		}
 
+		}
 	}
 
 }

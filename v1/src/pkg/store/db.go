@@ -12,14 +12,23 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type config struct {
+	user     string `yaml:"user"`
+	password string `yaml:"password"`
+	dbname   string `yaml:"dbname"`
+	host     string `yaml:"dbname"`
+	port     int    `yaml:"port"`
+	sslmode  string `yaml:"sslmode"`
+}
+
 var db *sql.DB
 
 func init() {
 
 	ma := getConfig()
 	conString := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=%s",
-		ma["user"].(string), ma["password"].(string), ma["dbname"].(string), ma["host"].(string),
-		string(ma["port"].(int)), ma["sslmode"].(string))
+		ma.user, ma.password, ma.dbname, ma.host,
+		string(ma.port), ma.sslmode)
 
 	d, err := sql.Open("postgres", conString)
 	if err != nil {
@@ -28,14 +37,14 @@ func init() {
 	db = d
 }
 
-func getConfig() map[string]interface{} {
+func getConfig() *config {
 	f, err := os.Open("config.yaml")
 	if err != nil {
 		log.Fatal("Failed to open configuration file:", err)
 	}
 	data, err := ioutil.ReadAll(f)
 	defer f.Close()
-	ma := make(map[string]interface{})
+	ma := &config{}
 	err = yaml.Unmarshal(data, ma)
 	if err != nil {
 		log.Println("Couldn't unmarshal yaml data :", err)

@@ -2,7 +2,6 @@ package ride
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -25,7 +24,7 @@ var (
 func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	// when written to this channel send data to the rider
 	// for low priority data
-	send := make(chan []byte)
+	send := make(chan map[string]interface{})
 	var rr store.RideRequest
 	riderdata := make(chan map[string]interface{})
 	rid := make(chan *store.MatchResponse)
@@ -36,11 +35,9 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	// read from rider
 	go func() {
-		fmt.Println("Started anonymous 1 read from rider")
 		for {
 			ma := make(map[string]interface{})
 			err = rider.ReadJSON(ma)
-			fmt.Println(ma)
 			if err != nil {
 				http.Error(w, "Couldn't parse data", 406)
 				continue
@@ -51,11 +48,14 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}()
 
 	go func() {
-		fmt.Println("Started anonymous 2 performs actions based on rider reads")
 		for {
 			select {
 			case data := <-send:
-				rider.WriteMessage(2, data)
+				switch data["type"].(string) {
+				case "finished":
+					rider.WriteJSON(data)
+				}
+
 			case x := <-riderdata:
 				switch x["type"].(string) {
 				case "cancelled":
@@ -77,7 +77,6 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	distance := 5.0
 	// get eight drivers that are in range of 5, 10 15
 	// first try looks for 5
-	go hub.Read(rid, send)
 	for i := 0; i < 3; i++ {
 		cli := store.GetRedisClient()
 		dls := cli.SearchDrivers(8, rr.Origin.Lat, rr.Origin.Lng, distance)
@@ -89,8 +88,9 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			if conn == nil {
 				continue
 			}
-			if !conn.booked {
+			if conn.busy == false {
 				go conn.Send()
+				go conn.Read(rid, send)
 				SendRideRequest(ThisRequest, rr.RiderID, conn)
 
 				timer := time.NewTimer(time.Second * 15)
@@ -99,10 +99,10 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 					continue
 				case accepted := <-rid:
 					// write to the rider the acceptance of their request
-					data, _ := json.Marshal(accepted)
 					accepted.ETA = ETA(&rr.Origin, &store.LatLng{Lat: accepted.Lat, Lng: accepted.Lng})
-					rider.WriteMessage(2, data)
-					conn.booked = true
+					rider.WriteJSON(accepted)
+					conn.busy = true
+					c <- true
 					// write  to database
 					store.Create(ThisRequest, val.Name, rr.RiderID)
 					break

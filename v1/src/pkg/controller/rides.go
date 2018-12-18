@@ -10,6 +10,7 @@ var hub *ride.Hub
 
 func init() {
 	hub = ride.NewHub()
+	go hub.Run()
 }
 
 // BookRide allows the rider to request a ride

@@ -1,8 +1,6 @@
 package ride
 
 import (
-	"encoding/json"
-
 	"github.com/pancakem/rides/v1/src/pkg/payment"
 	"github.com/pancakem/rides/v1/src/pkg/store"
 )
@@ -13,7 +11,7 @@ func saveToDB(dl *store.DriverLocation) {
 	cli.AddDriverLocation(dl)
 }
 
-func riderCancel(rideid string, time float64, distance float64, hub *Hub, an chan []byte) {
+func riderCancel(rideid string, time float64, distance float64, hub *Hub, an chan map[string]interface{}) {
 	// calculate the ride amount
 	price := payment.Price.Calculate(time/60, distance)
 	ma := make(map[string]interface{})
@@ -25,15 +23,14 @@ func riderCancel(rideid string, time float64, distance float64, hub *Hub, an cha
 
 	c := hub.Check(r.DriverID)
 	c.conn.WriteJSON(ma)
-	data, _ := json.Marshal(ma)
-	an <- data
+	an <- ma
 	defer func() {
 		store.Update(rideid, time, price, false)
 	}()
 
 }
 
-func finished(type_, rideid string, time float64, distance float64, an chan []byte, status bool) {
+func finished(type_, rideid string, time float64, distance float64, an chan map[string]interface{}, c *Client, status bool) {
 	// calculate the ride amount
 	price := payment.Price.Calculate(time/60, distance)
 	ma := make(map[string]interface{})
@@ -41,9 +38,9 @@ func finished(type_, rideid string, time float64, distance float64, an chan []by
 	ma["price"] = price
 
 	// write to channel cancelled and trigger a send json to rider writer
-	data, _ := json.Marshal(ma)
-	an <- data
 
+	an <- ma
+	c.conn.WriteJSON(ma)
 	defer func() {
 		// update the database table
 		store.Update(rideid, time, price, status)

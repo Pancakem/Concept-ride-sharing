@@ -1,7 +1,6 @@
 package store
 
 import (
-	"fmt"
 	"log"
 	"sync"
 
@@ -43,7 +42,6 @@ func (c *RedisClient) AddDriverLocation(dl *DriverLocation) {
 		key,
 		&redis.GeoLocation{Longitude: dl.Location.Lng, Latitude: dl.Location.Lat, Name: dl.DriverID},
 	)
-	fmt.Println("added")
 }
 
 // RemoveDriverLocation from cache

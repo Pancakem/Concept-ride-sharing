@@ -18,7 +18,6 @@ func GetLocation(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	client.conn.ReadJSON(dl)
 
-	go hub.run()
 
 	rediscli := store.GetRedisClient()
 	rediscli.AddDriverLocation(dl)
