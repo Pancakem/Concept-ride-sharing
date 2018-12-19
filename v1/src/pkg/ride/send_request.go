@@ -3,10 +3,10 @@ package ride
 import (
 	"log"
 
-	"github.com/pancakem/user-service/v1/src/pkg/model"
+	"github.com/pancakem/rides/v1/src/pkg/model"
 
+	"github.com/pancakem/rides/v1/src/pkg/common"
 	"github.com/pancakem/rides/v1/src/pkg/store"
-	"github.com/pancakem/user-service/v1/src/pkg/common"
 )
 
 // NewDriverRequest creates a driver request for the job queue
