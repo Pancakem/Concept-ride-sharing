@@ -1,9 +1,9 @@
-mapKey : 
-host: localhost
+mapKey: AIzaSyAjmxDbu7-EYMBayNNlz7IUdJMEMUw5ToI
+host: 159.89.102.143
 port: 5432
 user: postgres
-password: postgres
-dbname: postgres
+password: MySeCrETPAssWoRd
+dbname: mytest
 sslmode: disable
 logurl: logfile
 
