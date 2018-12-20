@@ -35,6 +35,7 @@ func SendRideRequest(dr *store.DriverRequest, riderid string, w *Client) {
 	ma["phone_number"] = x.Phonenumber
 	ma["origin"] = dr.Origin
 	ma["destination"] = dr.Origin
+	ma["rating"] = 5.0 // add datase field on user to write rating
 
 	w.conn.WriteJSON(ma)
 }

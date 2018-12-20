@@ -23,7 +23,7 @@ type RedisClient struct {
 func GetRedisClient() *RedisClient {
 	once.Do(func() {
 		client := redis.NewClient(&redis.Options{
-			Addr:     "0.0.0.0:32768",
+			Addr:     "159.89.102.143:32768",
 			Password: "",
 			DB:       0, // using the default database
 		})
