@@ -56,7 +56,6 @@ CREATE TABLE ratings (
 var db *sql.DB
 
 func init() {
-
 	ma := getConfig()
 	conString := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=%s",
 		ma.user, ma.password, ma.dbname, ma.host,

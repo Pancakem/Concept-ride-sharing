@@ -59,14 +59,14 @@ CREATE TABLE rider (
 CREATE TABLE driver (
     id VARCHAR NOT NULL PRIMARY KEY,
     fullname VARCHAR NOT NULL,
-    email VARCHAR UNIQUE,
-    phonenumber VARCHAR UNIQUE,
+    email VARCHAR ,
+    phonenumber VARCHAR ,
     password_ VARCHAR,
     isactive BOOLEAN,
-    national_id VARCHAR  UNIQUE,
-    license_no VARCHAR UNIQUE,
+    national_id VARCHAR,
+    license_no VARCHAR ,
     profile_image VARCHAR,
-    vehicle_id VARCHAR UNIQUE,
+    vehicle_id VARCHAR,
     create_date VARCHAR
 );
 

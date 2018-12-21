@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -53,13 +54,27 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotAcceptable)
 	}
 	id, status := service.RegisterDriver(&form)
+	fmt.Println(id, status)
 	if status != 201 {
 		w.WriteHeader(status)
+		w.Write([]byte(id))
+		return
+	}
+
+	authBackend := auth.InitJWTAuthBackend()
+	token, err := authBackend.GenerateToken(id)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(200)
 		return
 	}
 	w.WriteHeader(status)
+	form.GetByID()
 	m := make(map[string]string)
 	m["id"] = id
+	m["name"] = form.FullName
+	m["token"] = token
+	m["image_url"] = form.ImageURL
 	data, err := json.Marshal(m)
 	w.Write(data)
 }

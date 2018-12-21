@@ -31,7 +31,7 @@ func GetRedisClient() *RedisClient {
 	})
 	_, err := redisClient.Ping().Result()
 	if err != nil {
-		log.Fatalf("Could not connect to redis %v", err)
+		log.Printf("Could not connect to redis %v", err)
 	}
 	return redisClient
 }
@@ -61,15 +61,4 @@ func (c *RedisClient) SearchDrivers(limit int, lat, lng, r float64) []redis.GeoL
 		Count:       limit,
 	}).Result()
 	return res
-}
-
-// UpdateLocation updates the driver location
-func (c *RedisClient) UpdateLocation(lng, lat float64, driverid string) {
-
-}
-
-// Exist confirms if a driver exists if not a new entry is made else
-// the location is updated
-func (c *RedisClient) Exist(driverid string) bool {
-	return true
 }

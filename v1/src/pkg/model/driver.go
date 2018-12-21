@@ -109,7 +109,7 @@ func (u *Driver) Lock() {
 
 // Create adds a vehicle row to the database
 func (v *Vehicle) Create() error {
-	stmt, err := sqldb.Prepare(`INSERT INTO vehicle (id, driver_id, owner, 
+	stmt, err := sqldb.Prepare(`INSERT INTO vehicles (id, driver_id, owner, 
 		typeof, color, model, plate_no, image_url) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`)
 	if err != nil {
 		return err
@@ -121,7 +121,7 @@ func (v *Vehicle) Create() error {
 
 // Get populates object with data from database row
 func (v *Vehicle) Get() error {
-	row := sqldb.QueryRow("SELECT color, model, plate_no FROM vehicle WHERE id=$1", v.ID)
+	row := sqldb.QueryRow("SELECT color, model, plate_no FROM vehicles WHERE id=$1", v.ID)
 
 	if err := row.Scan(v.Color, v.Model, v.PlateNumber); err != nil {
 		return err

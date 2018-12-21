@@ -23,6 +23,8 @@ func Login(requestUser *model.LoginForm) (int, []byte) {
 		ma["id"] = id
 		ma["user"] = name
 		ma["token"] = token
+		ma["image_url"] = "" // add image url
+		
 		response, _ := json.Marshal(ma)
 		return http.StatusOK, response
 	}

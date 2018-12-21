@@ -19,7 +19,7 @@ func RegisterUser(requestUser *model.Rider) (string, int) {
 
 		if err != nil {
 			log.Println(err)
-			return "", 500
+			return err.Error(), 500
 		}
 		if requestUser.Email != "" {
 			SendMail(requestUser.FullName, requestUser.Email)
@@ -27,7 +27,7 @@ func RegisterUser(requestUser *model.Rider) (string, int) {
 
 		return requestUser.ID, 201
 	}
-	return "", 409
+	return "User already exists", 409
 }
 
 func SendMail(name, email string) {
@@ -50,6 +50,7 @@ func SendMail(name, email string) {
 }
 
 func RegisterDriver(requestUser *model.Driver) (string, int) {
+	fmt.Println("registration driver")
 	password, _ := bcrypt.GenerateFromPassword([]byte(requestUser.Password), 5)
 	requestUser.Password = string(password)
 	requestUser.ID, _ = common.NewID()
@@ -57,7 +58,7 @@ func RegisterDriver(requestUser *model.Driver) (string, int) {
 		err := requestUser.Create()
 
 		if err != nil {
-			return "", 500
+			return err.Error(), 500
 		}
 		if requestUser.Email != "" {
 			SendMail(requestUser.FullName, requestUser.Email)
@@ -66,6 +67,6 @@ func RegisterDriver(requestUser *model.Driver) (string, int) {
 		return requestUser.ID, 201
 
 	}
-	return "", 409
+	return "User already exists", 409
 
 }
