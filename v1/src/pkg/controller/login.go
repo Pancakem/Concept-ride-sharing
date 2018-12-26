@@ -34,7 +34,7 @@ func Logout(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-	} else {
-		w.WriteHeader(http.StatusOK)
+		return
 	}
+	w.WriteHeader(http.StatusOK)
 }

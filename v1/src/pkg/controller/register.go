@@ -47,6 +47,7 @@ func RegisterRider(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// RegisterDriver creates a new driver row if successful returns id and the driver auth
 func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 	form := model.Driver{}
 	err := json.NewDecoder(r.Body).Decode(&form)
@@ -79,6 +80,7 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+// ConfirmEmail of a new user
 func ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	token := params["token"]
@@ -88,6 +90,7 @@ func ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err != nil {
 			http.Error(w, "Invalid token. You have been sent a new token. Check your email", 401)
+			return
 		}
 	}()
 

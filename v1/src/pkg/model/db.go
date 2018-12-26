@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	// _ "github.com/mattn/go-sqlite3"
-	_ "github.com/lib/pq" // uncomment for production environment
+	_ "github.com/lib/pq"
 	"github.com/pancakem/rides/v1/src/pkg/setting"
 )
 
@@ -17,7 +16,7 @@ func setSQLEngine() {
 	conf.Get()
 	dataSourceName := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		conf.Host, conf.Port, conf.User, conf.Password, conf.DatabaseName, conf.SSLMode)
-	// toDb, err := sqlx.Open("postgres", dataSourceName)
+
 	toDb, err := sql.Open("postgres", dataSourceName)
 	if err != nil {
 		log.Println("Failed to connect to database", err)

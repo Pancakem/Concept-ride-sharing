@@ -10,6 +10,7 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/model"
 )
 
+// GetRiders a json encoded list of drivers
 func GetRiders(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	users := model.GetAllRider()
 	dat := &bytes.Buffer{}

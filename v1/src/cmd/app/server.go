@@ -15,5 +15,4 @@ func main() {
 	router := route.InitRouter()
 	log.Println("Listening at port 4000")
 	log.Fatal(http.ListenAndServe(*addr, router))
-
 }
