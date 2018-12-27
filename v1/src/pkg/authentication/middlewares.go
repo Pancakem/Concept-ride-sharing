@@ -146,16 +146,3 @@ func getPublicKey() *rsa.PublicKey {
 
 	return rsaPub
 }
-
-func Compare(passHash, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(passHash), []byte(password))
-	if err != nil {
-		return false
-	}
-	return true
-}
-
-func Generate(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), 5)
-	return string(hash), err
-}
