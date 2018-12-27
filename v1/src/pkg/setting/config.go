@@ -19,7 +19,7 @@ type Config struct {
 	Password     string `yaml:"password"`
 	DatabaseName string `yaml:"dbname"`
 	SSLMode      string `yaml:"sslmode"`
-	// the log url
+	// the log url 
 	LogFile string `yaml:"logurl"`
 }
 

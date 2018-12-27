@@ -9,7 +9,10 @@ import (
 const filename = "pricing.json"
 
 // Price initializes at start time
-var Price Pricing
+var (
+	Price      Pricing
+	OtherPrice Pricing
+)
 
 // Pricing has the constants needed to calculate prices
 type Pricing struct {
@@ -19,11 +22,12 @@ type Pricing struct {
 }
 
 func init() {
-	Price.Load()
+	Price.Load("nduthi_pricing.json")
+	OtherPrice.Load("car_pricing.json")
 }
 
 // Load gets the values for pricing
-func (p *Pricing) Load() error {
+func (p *Pricing) Load(filename string) error {
 	f, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -48,6 +52,17 @@ func (p *Pricing) UpdateJSON() error {
 	err = json.NewEncoder(f).Encode(&p)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// Vehicle type distinct pricing
+func Vehicle(vType string) *Pricing {
+	switch vType {
+	case "nduthi":
+		return &Price
+	case "car":
+		return &OtherPrice
 	}
 	return nil
 }

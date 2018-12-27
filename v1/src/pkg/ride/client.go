@@ -91,12 +91,12 @@ func (c *Client) Read(rid chan *store.MatchResponse, an chan map[string]interfac
 			}
 		case "cancelled":
 			// cancelled should contain ride id
-			finished("cancelled", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, c, false)
+			finished("cancelled", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), ma["vehicle_type"], an, c, false)
 			c.busy = false
 			return
 
 		case "finished":
-			finished("finished", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), an, c, true)
+			finished("finished", ma["id"].(string), ma["time"].(float64), ma["distance"].(float64), ma["vehicle_type"], an, c, true)
 			c.busy = false
 			return
 

@@ -6,11 +6,12 @@ import (
 
 // Request is the finalized data about a completed or not ride
 type Request struct {
-	ID          string     `db:"id"`
-	DriverID    string     `db:"driver"`
-	RiderID     string     `db:"rider"`
-	Origin      LatLng     `db:"origin"`
-	Destination LatLng     `db:"destination"`
+	ID          string `db:"id"`
+	DriverID    string `db:"driver"`
+	RiderID     string `db:"rider"`
+	Origin      LatLng `db:"origin"`
+	Destination LatLng `db:"destination"`
+	VehicleType string
 	ActualPrice float32    `db:"actual_price"`
 	Completed   bool       `db:"completed"`
 	RideTime    float64    `db:"ride_time"` // ride time in seconds
@@ -19,13 +20,14 @@ type Request struct {
 }
 
 // Create commits a ride Request into the database
-func Create(reques *DriverRequest, driverid, riderid string) error {
+func Create(reques *DriverRequest, driverid, riderid, VehicleType string) error {
 	req := &Request{
 		ID:          reques.RequestID,
 		DriverID:    driverid,
 		RiderID:     riderid,
 		Origin:      reques.Origin,
 		Destination: reques.Destination,
+		VehicleType: VehicleType,
 		Completed:   false,
 	}
 	err := createPlace(req)

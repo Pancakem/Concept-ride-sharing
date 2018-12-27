@@ -12,14 +12,16 @@ func saveToDB(dl *store.DriverLocation) {
 }
 
 func riderCancel(rideid string, time float64, distance float64, hub *Hub, an chan map[string]interface{}) {
-	// calculate the ride amount
-	price := payment.Price.Calculate(time/60, distance)
-	ma := make(map[string]interface{})
-	ma["type"] = "cancelled"
-	ma["price"] = price
-
 	// read db and find the connection
 	r := store.Read(rideid)
+	// calculate the ride amount
+	pricing := payment.Vehicle(r.VehicleType)
+
+	ma := make(map[string]interface{})
+	ma["type"] = "cancelled"
+
+	price := pricing.Calculate(time/60, distance)
+	ma["price"] = price
 
 	c := hub.Check(r.DriverID)
 	c.conn.WriteJSON(ma)
@@ -30,15 +32,15 @@ func riderCancel(rideid string, time float64, distance float64, hub *Hub, an cha
 
 }
 
-func finished(typeo, rideid string, time float64, distance float64, an chan map[string]interface{}, c *Client, status bool) {
+func finished(typeo, rideid string, time float64, distance float64, vehicleType string, an chan map[string]interface{}, c *Client, status bool) {
 	// calculate the ride amount
-	price := payment.Price.Calculate(time/60, distance)
+	pricing := payment.Vehicle(vehicleType)
+	price := pricing.Calculate(time/60, distance)
 	ma := make(map[string]interface{})
 	ma["type"] = typeo
 	ma["price"] = price
 
 	// write to channel cancelled and trigger a send json to rider writer
-
 	an <- ma
 	c.conn.WriteJSON(ma)
 	defer func() {

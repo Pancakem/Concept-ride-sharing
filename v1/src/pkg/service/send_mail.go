@@ -30,6 +30,7 @@ func (r *Request) SendMail() (bool, error) {
 	subject := "Subject: " + r.subject + "!\n"
 	msg := []byte(subject + mime + "\n" + r.body)
 	addr := "smtp.gmail.com"
+	
 
 	if err := smtp.SendMail(addr, authe, "westcoastcustomskenya@gmail.com", r.to, msg); err != nil {
 		log.Println(err)

@@ -89,8 +89,8 @@ func (b *JWTAuthBackend) Logout(tokenString string, token *jwt.Token) error {
 }
 func (b *JWTAuthBackend) IsInBlacklist(token string) bool {
 	bl := model.BlackListed{Token: token}
-	err := bl.Get()
-	if err != nil {
+	ok := bl.Get()
+	if !ok {
 		return false
 	}
 	return true
