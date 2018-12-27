@@ -15,6 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// JWTAuthBackend is the container for the token gen keys
 type JWTAuthBackend struct {
 	PrivateKey *rsa.PrivateKey
 	PublicKey  *rsa.PublicKey
@@ -27,6 +28,7 @@ const (
 
 var authBackendInstance *JWTAuthBackend
 
+// InitJWTAuthBackend initializes an auth object with a private and public key
 func InitJWTAuthBackend() *JWTAuthBackend {
 	if authBackendInstance == nil {
 		authBackendInstance = &JWTAuthBackend{
@@ -37,6 +39,7 @@ func InitJWTAuthBackend() *JWTAuthBackend {
 	return authBackendInstance
 }
 
+// GenerateToken uses the uuid of a user to give them an auth token
 func (b *JWTAuthBackend) GenerateToken(userUUID string) (string, error) {
 	token := jwt.New(jwt.SigningMethodRS512)
 	claims := token.Claims.(jwt.MapClaims)
@@ -47,6 +50,7 @@ func (b *JWTAuthBackend) GenerateToken(userUUID string) (string, error) {
 	return tokenString, err
 }
 
+// Authenticate validates a user
 func (b *JWTAuthBackend) Authenticate(user *model.LoginForm) (bool, string, string) {
 	pass := user.Password
 	dbInt, err := user.Get()
@@ -83,10 +87,13 @@ func (b *JWTAuthBackend) getTokenRemainingValidity(timestamp interface{}) int {
 	return expireOffset
 }
 
+// Logout expires an overdue token by adding it to the blacklist
 func (b *JWTAuthBackend) Logout(tokenString string, token *jwt.Token) error {
 	bl := model.BlackListed{Token: tokenString}
 	return bl.Create()
 }
+
+// IsInBlacklist checks if the token has expired or was banned
 func (b *JWTAuthBackend) IsInBlacklist(token string) bool {
 	bl := model.BlackListed{Token: token}
 	ok := bl.Get()

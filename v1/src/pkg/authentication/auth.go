@@ -7,10 +7,12 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
+// TokenAuthentication is the struct that packs and unpacks the tken string to json
 type TokenAuthentication struct {
 	Token string `json:"token" form:"token"`
 }
 
+// RequireTokenAuth ensures protected urls are accessed using an uathenticated user
 func RequireTokenAuth(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	authBackend := InitJWTAuthBackend()
 
