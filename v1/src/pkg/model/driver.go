@@ -128,3 +128,15 @@ func (v *Vehicle) Get() error {
 	}
 	return nil
 }
+
+// GetVehicleType returns a string that is the type of vehicle a driver has
+func (u *Driver) GetVehicleType() string {
+	var typevehicle string
+
+	row := sqldb.QueryRow("SELECT typeof FROM vehicles WHERE driver_id=$1", u.ID)
+
+	if err := row.Scan(typevehicle); err != nil {
+		return ""
+	}
+	return typevehicle
+}
