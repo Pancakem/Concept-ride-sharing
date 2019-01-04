@@ -7,10 +7,6 @@ import (
 	"github.com/go-redis/redis"
 )
 
-const (
-	key = "drivers"
-)
-
 var once sync.Once
 var redisClient *RedisClient
 
@@ -39,19 +35,19 @@ func GetRedisClient() *RedisClient {
 // AddDriverLocation adds driver id and LatLng to redis db
 func (c *RedisClient) AddDriverLocation(dl *DriverLocation) {
 	c.GeoAdd(
-		key,
+		dl.Vehicle,
 		&redis.GeoLocation{Longitude: dl.Location.Lng, Latitude: dl.Location.Lat, Name: dl.DriverID},
 	)
 }
 
 // RemoveDriverLocation from cache
-func (c *RedisClient) RemoveDriverLocation(driverid string) {
-	c.ZRem(key, driverid)
+func (c *RedisClient) RemoveDriverLocation(vehicletype, driverid string) {
+	c.ZRem(vehicletype, driverid)
 }
 
 // SearchDrivers within a given radius
-func (c *RedisClient) SearchDrivers(limit int, lat, lng, r float64) []redis.GeoLocation {
-	res, _ := c.GeoRadius(key, lng, lat, &redis.GeoRadiusQuery{
+func (c *RedisClient) SearchDrivers(vehicletype string, limit int, lat, lng, r float64) []redis.GeoLocation {
+	res, _ := c.GeoRadius(vehicletype, lng, lat, &redis.GeoRadiusQuery{
 		Radius:      r,
 		Unit:        "km",
 		WithCoord:   true,
