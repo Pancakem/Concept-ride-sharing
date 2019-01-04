@@ -85,7 +85,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	cli := store.GetRedisClient()
 	for i := 0; i < 3; i++ {
 
-		dls := cli.SearchDrivers(8, rr.Origin.Lat, rr.Origin.Lng, distance)
+		dls := cli.SearchDrivers(rr.VehicleType, 8, rr.Origin.Lat, rr.Origin.Lng, distance)
 		c := make(chan bool) // record accepted to exit outer loop
 
 		// send those drivers the request
@@ -111,7 +111,7 @@ func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 					conn.busy = true
 					c <- true
 					// write  to database
-					store.Create(ThisRequest, val.Name, rr.RiderID)
+					store.Create(ThisRequest, val.Name, rr.RiderID, rr.VehicleType)
 					break
 				}
 
