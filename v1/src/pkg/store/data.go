@@ -11,6 +11,8 @@ type LatLng struct {
 type RideRequest struct {
 	// rider_id key
 	RiderID string `json:"rider_id"`
+	// Type of vehicle the rider wants
+	VehicleType string `json:"vehicle_type"`
 	// origin coordinates
 	Origin LatLng `json:"origin"`
 	// destination coordinates
@@ -36,18 +38,19 @@ type Accepted struct {
 // DriverLocation wrapper
 type DriverLocation struct {
 	DriverID string `json:"driver_id"`
+	Vehicle  string `json:"vehicle"`
 	Location LatLng `json:"location"`
 }
 
 // MatchResponse wrapper
 type MatchResponse struct {
-	Type string `json:"type"`
-	LatLng `json:"location"`
-	Name string `json:"name"`
-	PhoneNumber string `json:"phone_number"`
-	ImageURL string `json:"image_url"`
-	VehicleModel string `json:"vehicle_model"`
-	VehicleColor string `json:"vehicle_color"`
-	VehiclePlate string `json:"vehicle_plate"`
-	ETA float64 `json:"ETA"`
+	Type         string `json:"type"`
+	LatLng       `json:"location"`
+	Name         string  `json:"name"`
+	PhoneNumber  string  `json:"phone_number"`
+	ImageURL     string  `json:"image_url"`
+	VehicleModel string  `json:"vehicle_model"`
+	VehicleColor string  `json:"vehicle_color"`
+	VehiclePlate string  `json:"vehicle_plate"`
+	ETA          float64 `json:"ETA"`
 }
