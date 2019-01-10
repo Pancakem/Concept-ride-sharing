@@ -30,12 +30,19 @@ type Vehicle struct {
 	TypeOf      string
 }
 
-func (u *Driver) GetByID() error {
+func GetDriverByID(id string) (*Driver, error) {
 	row := sqldb.QueryRow(`SELECT id, fullname, email, phonenumber, password_, isactive, 
-	national_id, license_no, profile_image,vehicle_id FROM driver WHERE id=$1`, u.ID)
+	national_id, license_no, profile_image,vehicle_id FROM driver WHERE id=$1`, id)
+
+	u := &Driver{}
+
 	err := row.Scan(&u.ID, &u.FullName, &u.Email, &u.Phonenumber, &u.Password,
 		&u.IsActive, &u.NationalID, &u.LicenseNo, &u.ProfileImage, &u.Vehicle.ID)
-	return err
+
+	if err != nil {
+		return nil, err
+	}
+	return u, err
 }
 
 func (u *Driver) Get() error {
@@ -70,8 +77,8 @@ func (u *Driver) Update() error {
 
 }
 
-func (u *Driver) Delete() error {
-	_, err := sqldb.Exec("DELETE FROM driver WHERE id=$1", u.ID)
+func DeleteVehicle(id string) error {
+	_, err := sqldb.Exec("DELETE FROM driver WHERE id=$1", id)
 	return err
 }
 
@@ -119,21 +126,22 @@ func (v *Vehicle) Create() error {
 
 }
 
-// Get populates object with data from database row
-func (v *Vehicle) Get() error {
-	row := sqldb.QueryRow("SELECT color, model, plate_no FROM vehicles WHERE id=$1", v.ID)
+// GetVehicle returns a pointer with data from database row
+func GetVehicle(id string) (*Vehicle, error) {
+	var v *Vehicle
+	row := sqldb.QueryRow("SELECT color, model, plate_no FROM vehicles WHERE id=$1", id)
 
 	if err := row.Scan(v.Color, v.Model, v.PlateNumber); err != nil {
-		return err
+		return v, err
 	}
-	return nil
+	return v, nil
 }
 
 // GetVehicleType returns a string that is the type of vehicle a driver has
-func (u *Driver) GetVehicleType() string {
+func GetVehicleType(id string) string {
 	var typevehicle string
 
-	row := sqldb.QueryRow("SELECT typeof FROM vehicles WHERE driver_id=$1", u.ID)
+	row := sqldb.QueryRow("SELECT typeof FROM vehicles WHERE driver_id=$1", id)
 
 	if err := row.Scan(typevehicle); err != nil {
 		return ""
