@@ -15,11 +15,11 @@ func (bl *BlackListed) Create() error {
 	return err
 }
 
-// Get checks for the token if exists in the database
-func (bl *BlackListed) Get() bool {
-	row := sqldb.QueryRow("SELECT * FROM blacklisted where token=?", bl.Token)
-	var token string
-	err := row.Scan(&token)
+// GetToken checks for the token if exists in the database
+func GetToken(token string) bool {
+	row := sqldb.QueryRow("SELECT * FROM blacklisted where token=?", token)
+	var toke string
+	err := row.Scan(&toke)
 	if err == sql.ErrNoRows || err != nil {
 		return false
 	}
