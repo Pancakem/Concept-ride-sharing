@@ -69,12 +69,12 @@ func (c *Client) Read(rid chan *store.MatchResponse, an chan map[string]interfac
 			// will trigger the send response to them
 			acc := &store.Accepted{}
 			json.Unmarshal(message, acc)
-			d := &model.Driver{ID: acc.DriverID}
-			err := d.GetByID()
+			d, err := model.GetDriverByID(acc.DriverID)
 			if err != nil {
 				log.Println((err))
 			}
-			err = d.Vehicle.Get()
+			pointerToVehicle, err := model.GetVehicle(d.ID)
+			d.Vehicle = *pointerToVehicle
 			if err != nil {
 				log.Println((err))
 			}
