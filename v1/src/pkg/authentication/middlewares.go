@@ -95,8 +95,7 @@ func (b *JWTAuthBackend) Logout(tokenString string, token *jwt.Token) error {
 
 // IsInBlacklist checks if the token has expired or was banned
 func (b *JWTAuthBackend) IsInBlacklist(token string) bool {
-	bl := model.BlackListed{Token: token}
-	ok := bl.Get()
+	ok := model.GetToken(token)
 	if !ok {
 		return false
 	}
