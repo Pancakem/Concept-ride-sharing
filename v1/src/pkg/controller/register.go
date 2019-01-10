@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -55,7 +54,7 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusNotAcceptable)
 	}
 	id, status := service.RegisterDriver(&form)
-	fmt.Println(id, status)
+
 	if status != 201 {
 		w.WriteHeader(status)
 		w.Write([]byte(id))
@@ -70,7 +69,12 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(status)
-	form.GetByID()
+	// form.GetByID()
+	// newDriver, err := model.GetDriverByID(id)
+	// if err != nil {
+	// 	log.Println(err)
+
+	// }
 	m := make(map[string]string)
 	m["id"] = id
 	m["name"] = form.FullName
