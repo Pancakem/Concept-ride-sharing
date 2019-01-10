@@ -74,7 +74,7 @@ func (h *Hub) Read() {
 						// delete location from redis
 						// find vehicle type from database
 						dr := model.Driver{ID: key}
-						cli.RemoveDriverLocation(dr.GetVehicleType(), key)
+						cli.RemoveDriverLocation(model.GetVehicleType(dr.Vehicle.ID), key)
 					}
 					break
 				}
