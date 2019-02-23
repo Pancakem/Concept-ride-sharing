@@ -85,15 +85,6 @@ func GetAllRider() []Rider {
 	return riders
 }
 
-// Exist checks if the rider exists
-func (u *Rider) Exist() bool {
-	err := u.Get()
-	if err != nil {
-		return false
-	}
-	return true
-}
-
 // LoginForm used to abstract loggin
 type LoginForm struct {
 	Email       string
