@@ -100,13 +100,6 @@ func GetAllDriver() []Driver {
 	return drivers
 }
 
-func (u *Driver) Exist() bool {
-	err := u.Get()
-	if err != nil {
-		return false
-	}
-	return true
-}
 
 // Lock bans driver from platform
 func (u *Driver) Lock() {
