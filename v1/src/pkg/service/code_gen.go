@@ -52,9 +52,9 @@ func DecodeToken(token string) error {
 	if err != nil {
 		li := separate(string(plainText))
 		user.Email = string(li[0])
-		if !user.Exist() {
+		if !model.Exist(user) {
 			driv.Email = string(li[0])
-			if !driv.Exist() {
+			if !model.Exist(driv) {
 				return err
 			}
 			timestamp := li[0]
