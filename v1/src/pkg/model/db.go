@@ -9,7 +9,6 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/setting"
 )
 
-
 var schema = `
 CREATE TABLE rider (
     id VARCHAR NOT NULL PRIMARY KEY,
@@ -84,11 +83,9 @@ type DefaultService interface {
 	Create() error
 	Get() error
 	Update() error
-	Delete() error
-	GetAll() interface{}
 }
 
-// Check if the type exists
+// Exist checks if the type exists
 func Exist(u DefaultService) bool {
 	err := u.Get()
 	if err != nil {
