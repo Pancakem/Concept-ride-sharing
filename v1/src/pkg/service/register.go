@@ -14,7 +14,7 @@ func RegisterUser(requestUser *model.Rider) (string, int) {
 	password, _ := bcrypt.GenerateFromPassword([]byte(requestUser.Password), 5)
 	requestUser.Password = string(password)
 	requestUser.ID, _ = common.NewID()
-	if !requestUser.Exist() {
+	if !model.Exist(requestUser) {
 		err := requestUser.Create()
 
 		if err != nil {
@@ -42,8 +42,8 @@ func SendMail(name, email string) {
 	r := NewRequest([]string{email}, "Confirm Email Address", "")
 	err := r.ParseTemplate("mail.html", data)
 	if err != nil {
-		ok, _ := r.SendMail()
-		if !ok {
+		err := r.SendMail()
+		if err == nil {
 			r.SendMail()
 		}
 	}
@@ -54,7 +54,7 @@ func RegisterDriver(requestUser *model.Driver) (string, int) {
 	password, _ := bcrypt.GenerateFromPassword([]byte(requestUser.Password), 5)
 	requestUser.Password = string(password)
 	requestUser.ID, _ = common.NewID()
-	if !requestUser.Exist() {
+	if !model.Exist(requestUser) {
 		err := requestUser.Create()
 
 		if err != nil {
