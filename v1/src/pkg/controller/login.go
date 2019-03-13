@@ -8,6 +8,7 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/service"
 )
 
+// Login handles a auth request
 func Login(w http.ResponseWriter, r *http.Request) {
 	requestUser := new(model.Rider)
 	decoder := json.NewDecoder(r.Body)
@@ -20,6 +21,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.Write(token)
 }
 
+// RefreshToken handles a token refresh request
 func RefreshToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	requestUser := new(model.Rider)
 	decoder := json.NewDecoder(r.Body)
@@ -29,6 +31,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	w.Header().Set("Authorization", string(service.RefreshToken(requestUser)))
 }
 
+// Logout handles a logout request
 func Logout(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	err := service.Logout(r)
 	w.Header().Set("Content-Type", "application/json")
