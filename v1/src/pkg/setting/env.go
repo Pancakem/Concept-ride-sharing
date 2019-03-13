@@ -13,17 +13,16 @@ var environments = map[string]string{
 	"tests":       "tests.json",
 }
 
+// Settings holds the data required to successfully start the app
 type Settings struct {
+	Environment        string
 	PrivateKeyPath     string `josn:"PrivateKeyPath"`
 	PublicKeyPath      string `json:"PublicKeyPath"`
 	JWTExpirationDelta int    `json:"JWTExpirationDelta"`
 }
 
-var settings = Settings{}
-var env = "development"
-
 func init() {
-	env = os.Getenv("GO_ENV")
+	env := os.Getenv("GO_ENV")
 	if env == "" {
 		log.Println("Warning: Setting development environment due to lack of GO_ENV value")
 		env = "development"
@@ -31,26 +30,18 @@ func init() {
 	LoadSettingsByEnv(env)
 }
 
-func LoadSettingsByEnv(env string) {
+// LoadSettingsByEnv returns a pointer to a settings struct
+func LoadSettingsByEnv(env string) *Settings {
 	content, err := ioutil.ReadFile(environments[env])
 	if err != nil {
 		log.Println("Error while reading config file", err)
+		return nil
 	}
-	settings = Settings{}
-	jsonErr := json.Unmarshal(content, &settings)
+	settings := new(Settings)
+	jsonErr := json.Unmarshal(content, settings)
 	if jsonErr != nil {
 		log.Println("Error while parsing config file", jsonErr)
+		return nil
 	}
-}
-
-func GetEnvironment() string {
-	return env
-}
-
-func Get() Settings {
-	return settings
-}
-
-func IsTestEnvironment() bool {
-	return env == "tests"
+	return nil
 }
