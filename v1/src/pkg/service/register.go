@@ -37,7 +37,7 @@ func SendMail(name, email string) {
 		URL  string
 	}{
 		name,
-		MakeUrl(email),
+		MakeURL(email),
 	}
 	fmt.Println(data.URL)
 	r := NewRequest([]string{email}, "Confirm Email Address", "")
