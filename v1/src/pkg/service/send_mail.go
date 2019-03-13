@@ -42,6 +42,7 @@ func (r *Request) SendMail() error {
 	return nil
 }
 
+// ParseTemplate gets the format of the email being sent
 func (r *Request) ParseTemplate(templateFileName string, data interface{}) error {
 	t, err := template.ParseFiles(templateFileName)
 	if err != nil {
