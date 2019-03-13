@@ -21,6 +21,8 @@ type Settings struct {
 	JWTExpirationDelta int    `json:"JWTExpirationDelta"`
 }
 
+var settings = Settings{}
+
 func init() {
 	env := os.Getenv("GO_ENV")
 	if env == "" {
@@ -44,4 +46,9 @@ func LoadSettingsByEnv(env string) *Settings {
 		return nil
 	}
 	return nil
+}
+
+// Get returns the settings
+func Get() Settings {
+	return settings
 }
