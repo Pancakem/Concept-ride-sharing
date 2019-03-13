@@ -7,7 +7,10 @@ import (
 	"net/smtp"
 )
 
-var authe smtp.Auth
+var (
+	authe smtp.Auth
+	sender string
+)
 
 // Request struct
 type Request struct {
@@ -33,9 +36,8 @@ func (r *Request) SendMail() error {
 	subject := "Subject: " + r.subject + "!\n"
 	msg := []byte(subject + mime + "\n" + r.body)
 	addr := "smtp.gmail.com"
-	
 
-	if err := smtp.SendMail(addr, authe, "westcoastcustomskenya@gmail.com", r.to, msg); err != nil {
+	if err := smtp.SendMail(addr, authe, sender, r.to, msg); err != nil {
 		log.Println(err)
 		return err
 	}
