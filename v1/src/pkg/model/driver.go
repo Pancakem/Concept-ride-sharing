@@ -30,6 +30,7 @@ type Vehicle struct {
 	TypeOf      string
 }
 
+// GetDriverByID returns a driver pointer given the id, a nil and error otherwise
 func GetDriverByID(id string) (*Driver, error) {
 	row := sqldb.QueryRow(`SELECT id, fullname, email, phonenumber, password_, isactive, 
 	national_id, license_no, profile_image,vehicle_id FROM driver WHERE id=$1`, id)
@@ -45,6 +46,7 @@ func GetDriverByID(id string) (*Driver, error) {
 	return u, err
 }
 
+// Get returns the existing driver details
 func (u *Driver) Get() error {
 	if u.Email != "" {
 		row := sqldb.QueryRow("SELECT id, fullname, password_ FROM driver WHERE email=$1", u.Email)
@@ -56,6 +58,7 @@ func (u *Driver) Get() error {
 	return err
 }
 
+// Create adds a new driver to the database
 func (u *Driver) Create() error {
 	stmt, err := sqldb.Prepare(`INSERT INTO driver (id, fullname, email, 
 		phonenumber, password_, profile_image, license_no, national_id, isactive)VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`)
@@ -67,6 +70,7 @@ func (u *Driver) Create() error {
 	return err
 }
 
+// Update a driver details
 func (u *Driver) Update() error {
 	stmt, err := sqldb.Prepare("UPDATE rider SET email=$1 phonenumber=$2 payment=$3 WHERE id=$4")
 	if err != nil {
@@ -77,11 +81,13 @@ func (u *Driver) Update() error {
 
 }
 
+// DeleteVehicle removes a vehicle from the database
 func DeleteVehicle(id string) error {
 	_, err := sqldb.Exec("DELETE FROM driver WHERE id=$1", id)
 	return err
 }
 
+// GetAllDriver returns an array of all available drivers
 func GetAllDriver() []Driver {
 	drivers := []Driver{}
 	rows, err := sqldb.Query("SELECT * FROM driver")
