@@ -9,7 +9,7 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/common"
 	"github.com/pancakem/rides/v1/src/pkg/model"
 )
-
+// RegisterUser creates a new user entry
 func RegisterUser(requestUser *model.Rider) (string, int) {
 	password, _ := bcrypt.GenerateFromPassword([]byte(requestUser.Password), 5)
 	requestUser.Password = string(password)
@@ -30,6 +30,7 @@ func RegisterUser(requestUser *model.Rider) (string, int) {
 	return "User already exists", 409
 }
 
+// SendMail sends an email to a given user address
 func SendMail(name, email string) {
 	data := struct {
 		Name string
@@ -49,6 +50,7 @@ func SendMail(name, email string) {
 	}
 }
 
+// RegisterDriver adds new driver to db
 func RegisterDriver(requestUser *model.Driver) (string, int) {
 	fmt.Println("registration driver")
 	password, _ := bcrypt.GenerateFromPassword([]byte(requestUser.Password), 5)
