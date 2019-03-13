@@ -1,5 +1,5 @@
 {
-  "PrivateKeyPath": "keys/private_key",
-  "PublicKeyPath": "keys/public_key.pub",
+  "PrivateKeyPath": "keys/key",
+  "PublicKeyPath": "keys/key.pub",
   "JWTExpirationDelta": 504
 }
