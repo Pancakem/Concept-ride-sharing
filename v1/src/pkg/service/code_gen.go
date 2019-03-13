@@ -65,7 +65,8 @@ func separate(token string) []string {
 	return strings.SplitAfter(token, " ")
 }
 
-func validateToken(token string) bool {
+// ValidateToken determines if a token is valid or not
+func ValidateToken(token string) bool {
 	li := decodeToken(token)
 	if len(li) < 1 {
 		return false
