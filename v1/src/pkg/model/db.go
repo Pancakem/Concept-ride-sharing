@@ -5,54 +5,11 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" //
 	"github.com/pancakem/rides/v1/src/pkg/setting"
 )
 
-var schema = `
-CREATE TABLE rider (
-    id VARCHAR NOT NULL PRIMARY KEY,
-    fullname VARCHAR NOT NULL,
-    email VARCHAR,
-    phonenumber VARCHAR,
-    password_ VARCHAR,
-    isactive BOOLEAN,
-    paymentmethod VARCHAR,
-    create_date VARCHAR
-);
-
-
-CREATE TABLE driver (
-    id VARCHAR NOT NULL PRIMARY KEY,
-    fullname VARCHAR NOT NULL,
-    email VARCHAR ,
-    phonenumber VARCHAR ,
-    password_ VARCHAR,
-    isactive BOOLEAN,
-    national_id VARCHAR,
-    license_no VARCHAR ,
-    profile_image VARCHAR,
-    vehicle_id VARCHAR,
-    create_date VARCHAR
-);
-
-
-CREATE TABLE vehicles (
-    id VARCHAR NOT NULL PRIMARY KEY,
-    driver_id VARCHAR,
-    image_url VARCHAR,
-    owner_ VARCHAR,
-    color VARCHAR,
-    typeof VARCHAR,
-    plate_no VARCHAR,
-    model VARCHAR
-);
-
--- expired jwt tokens
-CREATE TABLE blacklisted (
-    token VARCHAR NOT NULL
-);
-`
+var schema = ``
 
 var sqldb *sql.DB
 
