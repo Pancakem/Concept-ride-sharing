@@ -2,9 +2,9 @@ package service
 
 import "testing"
 
-func TestMakeUrl(t *testing.T) {
-	ur := MakeUrl("oumamarvin@gmail.com")
+func TestMakeURL(t *testing.T) {
+	ur := MakeURL("")
 	if ur == "" {
-		t.Fail(	)
+		t.Fail()
 	}
 }
