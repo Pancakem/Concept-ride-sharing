@@ -39,9 +39,7 @@ func generateToken(user string) string {
 	return string(token)
 }
 
-func DecodeToken(token string) error {
-	user := &model.Rider{}
-	driv := &model.Driver{}
+func decodeToken(token string) []string {
 	plainText, err := rsa.DecryptOAEP(
 		has,
 		rand.Reader,
@@ -50,43 +48,14 @@ func DecodeToken(token string) error {
 		[]byte(""),
 	)
 	if err != nil {
-		li := separate(string(plainText))
-		user.Email = string(li[0])
-		if !model.Exist(user) {
-			driv.Email = string(li[0])
-			if !model.Exist(driv) {
-				return err
-			}
-			timestamp := li[0]
-			layout := "2006-01-02T15:04:05.000Z"
-			t, _ := time.Parse(layout, timestamp)
-			elapsed := time.Since(t)
-			if elapsed > tokenLifetime {
-				SendMail(driv.FullName, driv.Email)
-				var err error
-				return err
-			}
-			driv.IsActive = true
-			return err
-
-		}
-		timestamp := li[1]
-		//
-		layout := "2006-01-02T15:04:05.000Z"
-		t, _ := time.Parse(layout, timestamp)
-		elapsed := time.Since(t)
-		if elapsed > tokenLifetime {
-			SendMail(user.FullName, user.Email)
-			var err error
-			return err
-		}
-		user.IsActive = true
-		return err
+		return nil
 	}
-	return err
+	li := separate(string(plainText))
+	return li
 }
 
-func MakeUrl(email string) string {
+// MakeURL builds a URL for the email confirmation
+func MakeURL(email string) string {
 	ur := "/api/v1/user/confirm-email/"
 	ur += generateToken(email)
 	return ur
@@ -94,4 +63,40 @@ func MakeUrl(email string) string {
 
 func separate(token string) []string {
 	return strings.SplitAfter(token, " ")
+}
+
+func validateToken(token string) bool {
+	li := decodeToken(token)
+	if len(li) < 1 {
+		return false
+	}
+	user := new(model.Rider)
+	driv := new(model.Driver)
+	
+	user.Email = string(li[0])
+	if !model.Exist(user) {
+		driv.Email = string(li[0])
+		if !model.Exist(driv) {
+			return false
+		}
+		timestamp := li[1]
+		if expiredTime(timestamp) {
+			return false
+		}
+	}
+	timestamp := li[1]
+	if expiredTime(timestamp) {
+		return false
+	}
+	return true
+	}
+
+func expiredTime(timestamp  string) bool {
+	layout := "2006-01-02T15:04:05.000Z"
+	t, _ := time.Parse(layout, timestamp)
+	elapsed := time.Since(t)
+	if elapsed > tokenLifetime {
+		return false
+	}
+	return true
 }
