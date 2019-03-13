@@ -9,7 +9,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" //
 )
 
 type config struct {
