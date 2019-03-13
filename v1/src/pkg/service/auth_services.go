@@ -11,6 +11,7 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/model"
 )
 
+// Login authenticates a user
 func Login(requestUser *model.LoginForm) (int, []byte) {
 	authBackend := auth.InitJWTAuthBackend()
 	ok, name, id := authBackend.Authenticate(requestUser)
@@ -24,13 +25,14 @@ func Login(requestUser *model.LoginForm) (int, []byte) {
 		ma["user"] = name
 		ma["token"] = token
 		ma["image_url"] = "" // add image url
-		
+
 		response, _ := json.Marshal(ma)
 		return http.StatusOK, response
 	}
 	return http.StatusUnauthorized, []byte("")
 }
 
+// RefreshToken returns a token for the user given
 func RefreshToken(v interface{}) []byte {
 	authBackend := auth.InitJWTAuthBackend()
 	requestRider, ok := v.(model.Rider)
@@ -56,6 +58,7 @@ func RefreshToken(v interface{}) []byte {
 	return response
 }
 
+// Logout deauths a user
 func Logout(req *http.Request) error {
 	authBackend := auth.InitJWTAuthBackend()
 	tokenRequest, err := request.ParseFromRequest(req, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
