@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/pancakem/rides/v1/src/pkg/authentication"
+	auth "github.com/pancakem/rides/v1/src/pkg/authentication"
 
 	"github.com/gorilla/mux"
 
@@ -53,7 +53,7 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotAcceptable)
 	}
-	id, status := service.RegisterDriver(&form)
+	id, status := service.RegisterUser(&form)
 
 	if status != 201 {
 		w.WriteHeader(status)
@@ -89,10 +89,10 @@ func ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	token := params["token"]
 
-	err := service.DecodeToken(token)
+	ok := service.ValidateToken(token)
 
 	defer func() {
-		if err != nil {
+		if !ok {
 			http.Error(w, "Invalid token. You have been sent a new token. Check your email", 401)
 			return
 		}
