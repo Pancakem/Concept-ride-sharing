@@ -7,5 +7,6 @@ willing and available driver
 
 * Get this code `go get -u github.com/pancakem/rides` 
 * Install `docker`
+* Run `prepare.sh`
 * Change the `config.yaml` file to reflect your system database
 * Finally run the server `go run ./v1/src/cmd/app/`
