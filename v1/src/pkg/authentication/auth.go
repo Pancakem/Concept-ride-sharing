@@ -18,7 +18,7 @@ func RequireTokenAuth(res http.ResponseWriter, req *http.Request, next http.Hand
 
 	token, err := jwt.Parse(req.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: &v", token.Header["alg"])
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 		return authBackend.PublicKey, nil
 
