@@ -10,8 +10,8 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/pancakem/rides/v1/src/pkg/model"
 	"github.com/pancakem/rides/v1/src/pkg/setting"
+	"github.com/pancakem/rides/v1/src/pkg/store"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -51,7 +51,7 @@ func (b *JWTAuthBackend) GenerateToken(userUUID string) (string, error) {
 }
 
 // Authenticate validates a user
-func (b *JWTAuthBackend) Authenticate(user *model.LoginForm) (bool, string, string) {
+func (b *JWTAuthBackend) Authenticate(user *store.LoginForm) (bool, string, string) {
 	pass := user.Password
 	dbInt, err := user.Get()
 	if err != nil {
@@ -59,9 +59,9 @@ func (b *JWTAuthBackend) Authenticate(user *model.LoginForm) (bool, string, stri
 		return false, "", "false"
 	}
 
-	dbRider, ok := dbInt.(model.Rider)
+	dbRider, ok := dbInt.(store.Rider)
 	if !ok {
-		dbDriver, ok := dbInt.(model.Driver)
+		dbDriver, ok := dbInt.(store.Driver)
 		if ok {
 			if err = bcrypt.CompareHashAndPassword([]byte(dbDriver.Password), []byte(pass)); err != nil {
 				return false, "", ""
@@ -89,13 +89,13 @@ func (b *JWTAuthBackend) getTokenRemainingValidity(timestamp interface{}) int {
 
 // Logout expires an overdue token by adding it to the blacklist
 func (b *JWTAuthBackend) Logout(tokenString string, token *jwt.Token) error {
-	bl := model.BlackListed{Token: tokenString}
+	bl := store.BlackListed{Token: tokenString}
 	return bl.Create()
 }
 
 // IsInBlacklist checks if the token has expired or was banned
 func (b *JWTAuthBackend) IsInBlacklist(token string) bool {
-	ok := model.GetToken(token)
+	ok := store.GetToken(token)
 	if !ok {
 		return false
 	}
