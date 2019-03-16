@@ -5,11 +5,11 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"log"
 	"os"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/pancakem/rides/v1/src/pkg/common"
 	"github.com/pancakem/rides/v1/src/pkg/setting"
 	"github.com/pancakem/rides/v1/src/pkg/store"
 	"golang.org/x/crypto/bcrypt"
@@ -55,7 +55,7 @@ func (b *JWTAuthBackend) Authenticate(user *store.LoginForm) (bool, string, stri
 	pass := user.Password
 	dbInt, err := user.Get()
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		return false, "", "false"
 	}
 
@@ -105,7 +105,7 @@ func (b *JWTAuthBackend) IsInBlacklist(token string) bool {
 func getPrivateKey() *rsa.PrivateKey {
 	privateKeyFile, err := os.Open(setting.Get().PrivateKeyPath)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		return nil
 	}
 	permfileinfo, _ := privateKeyFile.Stat()
@@ -120,7 +120,7 @@ func getPrivateKey() *rsa.PrivateKey {
 	privateKeyFile.Close()
 	privateKeyImported, err := x509.ParsePKCS1PrivateKey(data.Bytes)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		return nil
 	}
 	return privateKeyImported
@@ -129,7 +129,7 @@ func getPrivateKey() *rsa.PrivateKey {
 func getPublicKey() *rsa.PublicKey {
 	publicKeyFile, err := os.Open(setting.Get().PublicKeyPath)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		return nil
 	}
 	permfileinfo, _ := publicKeyFile.Stat()
@@ -144,7 +144,7 @@ func getPublicKey() *rsa.PublicKey {
 	publicKeyFile.Close()
 	publicKeyImported, err := x509.ParsePKIXPublicKey(data.Bytes)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		return nil
 	}
 

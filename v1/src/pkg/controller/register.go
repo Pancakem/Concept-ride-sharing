@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	auth "github.com/pancakem/rides/v1/src/pkg/authentication"
@@ -34,7 +33,7 @@ func RegisterRider(w http.ResponseWriter, r *http.Request) {
 	authBackend := auth.InitJWTAuthBackend()
 	token, err := authBackend.GenerateToken(id)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		return
 	}
 	m := make(map[string]string)
@@ -64,7 +63,7 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 	authBackend := auth.InitJWTAuthBackend()
 	token, err := authBackend.GenerateToken(id)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		w.WriteHeader(200)
 		return
 	}
@@ -72,7 +71,7 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 	// form.GetByID()
 	// newDriver, err := store.GetDriverByID(id)
 	// if err != nil {
-	// 	log.Println(err)
+	// 	common.Log.Println(err)
 
 	// }
 	m := make(map[string]string)

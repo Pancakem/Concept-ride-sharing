@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"gopkg.in/yaml.v2"
 
 	_ "github.com/lib/pq" //
+	"github.com/pancakem/rides/v1/src/pkg/common"
 )
 
 type config struct {
@@ -64,7 +64,7 @@ func init() {
 
 	d, err := sql.Open("postgres", conString)
 	if err != nil {
-		log.Fatal("Couldn't establish database connection:", err)
+		common.Log.Fatal("Couldn't establish database connection:", err)
 	}
 	db = d
 	createSchema()
@@ -73,7 +73,7 @@ func init() {
 func createSchema() {
 	_, err := db.Exec(schema)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 	}
 
 }
@@ -81,18 +81,17 @@ func createSchema() {
 func getConfig() *config {
 	f, err := os.Open("config.yaml")
 	if err != nil {
-		log.Fatal("Failed to open configuration file:", err)
+		common.Log.Fatal("Failed to open configuration file:", err)
 	}
 	data, err := ioutil.ReadAll(f)
 	defer f.Close()
 	ma := &config{}
 	err = yaml.Unmarshal(data, ma)
 	if err != nil {
-		log.Println("Couldn't unmarshal yaml data :", err)
+		common.Log.Println("Couldn't unmarshal yaml data :", err)
 	}
 	return ma
 }
-
 
 // DefaultService the CRUD
 type DefaultService interface {

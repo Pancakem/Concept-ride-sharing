@@ -1,10 +1,10 @@
 package store
 
 import (
-	"log"
 	"sync"
 
 	"github.com/go-redis/redis"
+	"github.com/pancakem/rides/v1/src/pkg/common"
 )
 
 var once sync.Once
@@ -28,7 +28,7 @@ func GetRedisClient() *RedisClient {
 	})
 	_, err := redisClient.Ping().Result()
 	if err != nil {
-		log.Printf("Could not connect to redis %v", err)
+		common.Log.Printf("Could not connect to redis %v", err)
 	}
 	return redisClient
 }

@@ -3,12 +3,13 @@ package service
 import (
 	"bytes"
 	"html/template"
-	"log"
 	"net/smtp"
+
+	"github.com/pancakem/rides/v1/src/pkg/common"
 )
 
 var (
-	authe smtp.Auth
+	authe  smtp.Auth
 	sender string
 )
 
@@ -38,7 +39,7 @@ func (r *Request) SendMail() error {
 	addr := "smtp.gmail.com"
 
 	if err := smtp.SendMail(addr, authe, sender, r.to, msg); err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 		return err
 	}
 	return nil

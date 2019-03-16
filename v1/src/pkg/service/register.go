@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"log"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -25,7 +24,7 @@ func RegisterUser(user store.DefaultService) (string, int) {
 			err := requestUser.Create()
 
 			if err != nil {
-				log.Println(err)
+				common.Log.Println(err)
 				return err.Error(), 500
 			}
 			if requestUser.Email != "" {
@@ -43,7 +42,7 @@ func RegisterUser(user store.DefaultService) (string, int) {
 		err := requestDriver.Create()
 
 		if err != nil {
-			log.Println(err)
+			common.Log.Println(err)
 			return err.Error(), 500
 		}
 		if requestDriver.Email != "" {

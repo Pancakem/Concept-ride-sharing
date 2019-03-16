@@ -1,6 +1,6 @@
 package store
 
-import "log"
+import "github.com/pancakem/rides/v1/src/pkg/common"
 
 // AddDriverRating adds rating from rider
 func AddDriverRating(rideid string, rating float32) error {
@@ -10,7 +10,7 @@ func AddDriverRating(rideid string, rating float32) error {
 
 	stmt, err := db.Prepare(sql)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 	}
 	_, err = stmt.Exec(rideid, rating)
 	return err
@@ -24,7 +24,7 @@ func AddRiderRating(rideid string, rating float32) error {
 
 	stmt, err := db.Prepare(sql)
 	if err != nil {
-		log.Println(err)
+		common.Log.Println(err)
 	}
 	_, err = stmt.Exec(rideid, rating)
 	return err

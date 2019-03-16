@@ -2,9 +2,9 @@ package ride
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/gorilla/websocket"
+	"github.com/pancakem/rides/v1/src/pkg/common"
 	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
@@ -70,12 +70,12 @@ func (c *Client) Read(rid chan *store.MatchResponse, an chan map[string]interfac
 			json.Unmarshal(message, acc)
 			d, err := store.GetDriverByID(acc.DriverID)
 			if err != nil {
-				log.Println((err))
+				common.Log.Println((err))
 			}
 			pointerToVehicle, err := store.GetVehicle(d.ID)
 			d.Vehicle = *pointerToVehicle
 			if err != nil {
-				log.Println((err))
+				common.Log.Println((err))
 			}
 
 			rid <- &store.MatchResponse{

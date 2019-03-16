@@ -1,8 +1,6 @@
 package ride
 
 import (
-	"log"
-
 	"github.com/pancakem/rides/v1/src/pkg/store"
 
 	"github.com/pancakem/rides/v1/src/pkg/common"
@@ -12,7 +10,7 @@ import (
 func NewDriverRequest(r *store.RideRequest) *store.DriverRequest {
 	id, err := common.NewID()
 	if err != nil {
-		log.Println("Failed to get uuid", err)
+		common.Log.Println("Failed to get uuid", err)
 		return nil
 	}
 	return &store.DriverRequest{
