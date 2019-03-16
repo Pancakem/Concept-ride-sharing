@@ -53,7 +53,7 @@ func InRange(l *store.LatLng, dl *store.DriverLocation, dur int) error {
 	return nil
 }
 
-
+// ETA returns how far apart the origin and destination are
 func ETA(origin *store.LatLng, destination *store.LatLng) float64 {
 	client := http.Client{Timeout: time.Second * 5}
 	key := ""
