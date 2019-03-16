@@ -11,13 +11,13 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/pancakem/rides/v1/src/pkg/common"
-	"github.com/pancakem/rides/v1/src/pkg/model"
 	"github.com/pancakem/rides/v1/src/pkg/service"
+	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
 // RegisterRider route
 func RegisterRider(w http.ResponseWriter, r *http.Request) {
-	form := model.Rider{}
+	form := store.Rider{}
 	data, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	common.CheckError(err)
@@ -48,7 +48,7 @@ func RegisterRider(w http.ResponseWriter, r *http.Request) {
 
 // RegisterDriver creates a new driver row if successful returns id and the driver auth
 func RegisterDriver(w http.ResponseWriter, r *http.Request) {
-	form := model.Driver{}
+	form := store.Driver{}
 	err := json.NewDecoder(r.Body).Decode(&form)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotAcceptable)
@@ -70,7 +70,7 @@ func RegisterDriver(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(status)
 	// form.GetByID()
-	// newDriver, err := model.GetDriverByID(id)
+	// newDriver, err := store.GetDriverByID(id)
 	// if err != nil {
 	// 	log.Println(err)
 
