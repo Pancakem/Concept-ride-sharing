@@ -19,6 +19,7 @@ type config struct {
 	host     string `yaml:"dbname"`
 	port     int    `yaml:"port"`
 	sslmode  string `yaml:"sslmode"`
+	redisURL string `yaml:"redis_url"`
 }
 
 var schema = `
@@ -90,4 +91,21 @@ func getConfig() *config {
 		log.Println("Couldn't unmarshal yaml data :", err)
 	}
 	return ma
+}
+
+
+// DefaultService the CRUD
+type DefaultService interface {
+	Create() error
+	Get() error
+	Update() error
+}
+
+// Exist checks if the type exists
+func Exist(u DefaultService) bool {
+	err := u.Get()
+	if err != nil {
+		return false
+	}
+	return true
 }
