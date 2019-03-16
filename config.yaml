@@ -6,5 +6,5 @@ password: password
 dbname: mytest
 sslmode: disable
 logurl: logfile
-
+redis_url: localhost:6379
 
