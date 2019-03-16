@@ -1,4 +1,4 @@
-# Trip Booking Service 
+# Concept Ride Sharing
 
 This service receives trip requests from a rider client and matches them with a 
 willing and available driver
