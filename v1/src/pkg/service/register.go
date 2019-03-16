@@ -7,21 +7,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/pancakem/rides/v1/src/pkg/common"
-	"github.com/pancakem/rides/v1/src/pkg/model"
+	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
 // RegisterUser creates a new user entry
-func RegisterUser(user model.DefaultService) (string, int) {
-	requestDriver, ok := user.(*model.Driver)
+func RegisterUser(user store.DefaultService) (string, int) {
+	requestDriver, ok := user.(*store.Driver)
 	if !ok {
-		requestUser, ok := user.(*model.Rider)
+		requestUser, ok := user.(*store.Rider)
 		if !ok {
 			return "", 0
 		}
 		password, _ := bcrypt.GenerateFromPassword([]byte(requestUser.Password), 5)
 		requestUser.Password = string(password)
 		requestUser.ID, _ = common.NewID()
-		if !model.Exist(requestUser) {
+		if !store.Exist(requestUser) {
 			err := requestUser.Create()
 
 			if err != nil {
@@ -39,7 +39,7 @@ func RegisterUser(user model.DefaultService) (string, int) {
 	password, _ := bcrypt.GenerateFromPassword([]byte(requestDriver.Password), 5)
 	requestDriver.Password = string(password)
 	requestDriver.ID, _ = common.NewID()
-	if !model.Exist(requestDriver) {
+	if !store.Exist(requestDriver) {
 		err := requestDriver.Create()
 
 		if err != nil {

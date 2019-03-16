@@ -3,10 +3,9 @@ package ride
 import (
 	"log"
 
-	"github.com/pancakem/rides/v1/src/pkg/model"
+	"github.com/pancakem/rides/v1/src/pkg/store"
 
 	"github.com/pancakem/rides/v1/src/pkg/common"
-	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
 // NewDriverRequest creates a driver request for the job queue
@@ -26,7 +25,7 @@ func NewDriverRequest(r *store.RideRequest) *store.DriverRequest {
 // SendRideRequest encodes and sends a driver
 func SendRideRequest(dr *store.DriverRequest, riderid string, w *Client) {
 	// create a rider instance to get data from db
-	x := model.Rider{ID: riderid}
+	x := store.Rider{ID: riderid}
 	x.GetByID()
 
 	ma := make(map[string]interface{})

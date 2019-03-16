@@ -9,7 +9,7 @@ import (
 	"time"
 
 	auth "github.com/pancakem/rides/v1/src/pkg/authentication"
-	"github.com/pancakem/rides/v1/src/pkg/model"
+	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
 const tokenLifetime = 2e15
@@ -71,13 +71,13 @@ func ValidateToken(token string) bool {
 	if len(li) < 1 {
 		return false
 	}
-	user := new(model.Rider)
-	driv := new(model.Driver)
-	
+	user := new(store.Rider)
+	driv := new(store.Driver)
+
 	user.Email = string(li[0])
-	if !model.Exist(user) {
+	if !store.Exist(user) {
 		driv.Email = string(li[0])
-		if !model.Exist(driv) {
+		if !store.Exist(driv) {
 			return false
 		}
 		timestamp := li[1]
@@ -90,9 +90,9 @@ func ValidateToken(token string) bool {
 		return false
 	}
 	return true
-	}
+}
 
-func expiredTime(timestamp  string) bool {
+func expiredTime(timestamp string) bool {
 	layout := "2006-01-02T15:04:05.000Z"
 	t, _ := time.Parse(layout, timestamp)
 	elapsed := time.Since(t)

@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/gorilla/websocket"
-	"github.com/pancakem/rides/v1/src/pkg/model"
 	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
@@ -69,11 +68,11 @@ func (c *Client) Read(rid chan *store.MatchResponse, an chan map[string]interfac
 			// will trigger the send response to them
 			acc := &store.Accepted{}
 			json.Unmarshal(message, acc)
-			d, err := model.GetDriverByID(acc.DriverID)
+			d, err := store.GetDriverByID(acc.DriverID)
 			if err != nil {
 				log.Println((err))
 			}
-			pointerToVehicle, err := model.GetVehicle(d.ID)
+			pointerToVehicle, err := store.GetVehicle(d.ID)
 			d.Vehicle = *pointerToVehicle
 			if err != nil {
 				log.Println((err))

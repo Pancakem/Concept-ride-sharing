@@ -8,11 +8,11 @@ import (
 	"github.com/dgrijalva/jwt-go/request"
 
 	auth "github.com/pancakem/rides/v1/src/pkg/authentication"
-	"github.com/pancakem/rides/v1/src/pkg/model"
+	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
 // Login authenticates a user
-func Login(requestUser *model.LoginForm) (int, []byte) {
+func Login(requestUser *store.LoginForm) (int, []byte) {
 	authBackend := auth.InitJWTAuthBackend()
 	ok, name, id := authBackend.Authenticate(requestUser)
 	if ok {
@@ -35,7 +35,7 @@ func Login(requestUser *model.LoginForm) (int, []byte) {
 // RefreshToken returns a token for the user given
 func RefreshToken(v interface{}) []byte {
 	authBackend := auth.InitJWTAuthBackend()
-	requestRider, ok := v.(model.Rider)
+	requestRider, ok := v.(store.Rider)
 	var token string
 	var err error
 	if ok {
@@ -44,7 +44,7 @@ func RefreshToken(v interface{}) []byte {
 			return []byte("")
 		}
 	} else {
-		requestDriver := v.(model.Driver)
+		requestDriver := v.(store.Driver)
 		token, err = authBackend.GenerateToken(string(requestDriver.ID))
 		if err != nil {
 			return []byte("")

@@ -3,8 +3,6 @@ package ride
 import (
 	"encoding/json"
 
-	"github.com/pancakem/rides/v1/src/pkg/model"
-
 	"github.com/gorilla/websocket"
 	"github.com/pancakem/rides/v1/src/pkg/store"
 )
@@ -73,8 +71,8 @@ func (h *Hub) Read() {
 						}
 						// delete location from redis
 						// find vehicle type from database
-						dr := model.Driver{ID: key}
-						cli.RemoveDriverLocation(model.GetVehicleType(dr.Vehicle.ID), key)
+						dr := store.Driver{ID: key}
+						cli.RemoveDriverLocation(store.GetVehicleType(dr.Vehicle.ID), key)
 					}
 					break
 				}
