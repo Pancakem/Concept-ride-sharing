@@ -1,4 +1,4 @@
-# Trip Booking Service 
+# Concept Ride Sharing
 
 This service receives trip requests from a rider client and matches them with a 
 willing and available driver
@@ -7,5 +7,6 @@ willing and available driver
 
 * Get this code `go get -u github.com/pancakem/rides` 
 * Install `docker`
-* Change the `config.yaml` file to reflect your system database
+* Run `prepare.sh`
+* Change the `config.yaml` file to reflect your database
 * Finally run the server `go run ./v1/src/cmd/app/`
