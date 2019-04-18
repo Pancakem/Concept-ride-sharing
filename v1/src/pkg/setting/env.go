@@ -1,25 +1,25 @@
 package setting
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 
 	"github.com/pancakem/rides/v1/src/pkg/common"
+	"gopkg.in/yaml.v2"
 )
 
 var environments = map[string]string{
-	"production":  "prod.json",
-	"development": "pre.json",
-	"tests":       "tests.json",
+	"production":  "prod.yaml",
+	"development": "pre.yaml",
+	"tests":       "tests.yaml",
 }
 
 // Settings holds the data required to successfully start the app
 type Settings struct {
 	Environment        string
-	PrivateKeyPath     string `josn:"PrivateKeyPath"`
-	PublicKeyPath      string `json:"PublicKeyPath"`
-	JWTExpirationDelta int    `json:"JWTExpirationDelta"`
+	PrivateKeyPath     string `yaml:"PrivateKeyPath"`
+	PublicKeyPath      string `yaml:"PublicKeyPath"`
+	JWTExpirationDelta int    `yaml:"JWTExpirationDelta"`
 }
 
 var settings = Settings{}
@@ -41,9 +41,9 @@ func LoadSettingsByEnv(env string) *Settings {
 		return nil
 	}
 	settings := new(Settings)
-	jsonErr := json.Unmarshal(content, settings)
-	if jsonErr != nil {
-		common.Log.Println("Error while parsing config file", jsonErr)
+	yamlErr := yaml.Unmarshal(content, settings)
+	if yamlErr != nil {
+		common.Log.Println("Error while parsing config file", yamlErr)
 		return nil
 	}
 	return nil
