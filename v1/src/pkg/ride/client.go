@@ -36,6 +36,7 @@ func (c *Client) Send() {
 
 }
 
+// Read data from a client
 func (c *Client) Read(rid chan *store.MatchResponse, an chan map[string]interface{}) {
 
 	c.conn.SetReadLimit(maxMessageSize)
