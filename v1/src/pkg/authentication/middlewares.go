@@ -21,10 +21,13 @@ type JWTAuthBackend struct {
 	PublicKey  *rsa.PublicKey
 }
 
-const (
-	tokenDuration = 72
-	expireOffset  = 3600
-)
+func tokenDuration() int {
+	return 72
+}
+
+func expireOffset() int {
+	return 3600
+}
 
 var authBackendInstance *JWTAuthBackend
 
@@ -81,10 +84,10 @@ func (b *JWTAuthBackend) getTokenRemainingValidity(timestamp interface{}) int {
 		tm := time.Unix(int64(validity), 0)
 		remainder := tm.Sub(time.Now())
 		if remainder > 0 {
-			return int(remainder.Seconds() + expireOffset)
+			return int(remainder.Seconds() + float64(expireOffset()))
 		}
 	}
-	return expireOffset
+	return expireOffset()
 }
 
 // Logout expires an overdue token by adding it to the blacklist
