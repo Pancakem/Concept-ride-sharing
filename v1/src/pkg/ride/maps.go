@@ -22,7 +22,7 @@ var conv = fmt.Sprint
 func InRange(l *store.LatLng, dl *store.DriverLocation, dur int) error {
 	client := http.Client{Timeout: time.Second * 5}
 	key := ""
-	mapURL := "http://maps.googleapis.com/maps/api/directions/json?origin=" + conv(l.Lat) + "," + conv(l.Lng) + "&destination=" + conv(dl.Location.Lat) + "," + conv(dl.Location.Lng) + "&sensor=false&units=metric&mode=driving&key=" + key
+	mapURL := returnURL() + conv(l.Lat) + "," + conv(l.Lng) + "&destination=" + conv(dl.Location.Lat) + "," + conv(dl.Location.Lng) + "&sensor=false&units=metric&mode=driving&key=" + key
 
 	req, err := http.NewRequest("GET", mapURL, nil)
 	if err != nil {
@@ -57,7 +57,7 @@ func InRange(l *store.LatLng, dl *store.DriverLocation, dur int) error {
 func ETA(origin *store.LatLng, destination *store.LatLng) float64 {
 	client := http.Client{Timeout: time.Second * 5}
 	key := ""
-	mapURL := "http://maps.googleapis.com/maps/api/directions/json?origin=" + conv(origin.Lat) + "," + conv(origin.Lng) + "&destination=" + conv(destination.Lat) + "," + conv(destination.Lng) + "&sensor=false&units=metric&mode=driving&key=" + key
+	mapURL := returnURL() + conv(origin.Lat) + "," + conv(origin.Lng) + "&destination=" + conv(destination.Lat) + "," + conv(destination.Lng) + "&sensor=false&units=metric&mode=driving&key=" + key
 
 	req, err := http.NewRequest("GET", mapURL, nil)
 	if err != nil {
@@ -81,4 +81,8 @@ func ETA(origin *store.LatLng, destination *store.LatLng) float64 {
 	tInt := values.Time["value"]
 	duration := tInt
 	return float64(duration / 60)
+}
+
+func returnURL() string {
+	return "http://maps.googleapis.com/maps/api/directions/json?origin="
 }
