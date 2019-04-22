@@ -6,7 +6,7 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
-// GetLocation of the drivers by creating websockets
+// GetLocation of the drivers then create websockets connection with them
 func GetLocation(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	upgrader := newUpgrader()
 	driver, err := upgrader.Upgrade(w, r, nil) // later update response headers
