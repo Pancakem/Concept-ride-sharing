@@ -8,7 +8,7 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
-var maxMessageSize int64 = 512
+func maxMessageSize() int64 { return 512 }
 
 // Client wraps the user connection and data to be sent through
 type Client struct {
@@ -39,7 +39,7 @@ func (c *Client) Send() {
 // Read data from a client
 func (c *Client) Read(rid chan *store.MatchResponse, an chan map[string]interface{}) {
 
-	c.conn.SetReadLimit(maxMessageSize)
+	c.conn.SetReadLimit(maxMessageSize())
 
 	for {
 		_, message, err := c.conn.ReadMessage()

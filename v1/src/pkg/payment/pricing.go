@@ -6,7 +6,7 @@ import (
 )
 
 // ride cost constants are stored in a file
-const filename = "pricing.json"
+func filename() string { return "pricing.json" }
 
 // Price initializes at start time
 var (
@@ -43,7 +43,7 @@ func (p *Pricing) Load(filename string) error {
 
 // UpdateJSON updates pricing constants in the file
 func (p *Pricing) UpdateJSON() error {
-	f, err := os.OpenFile(filename, os.O_WRONLY, 0666)
+	f, err := os.OpenFile(filename(), os.O_WRONLY, 0666)
 	if err != nil {
 		return err
 	}

@@ -8,11 +8,6 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/common"
 )
 
-var (
-	authe  smtp.Auth
-	sender string
-)
-
 // Request struct
 type Request struct {
 	from    string
@@ -32,7 +27,7 @@ func NewRequest(to []string, subject, body string) *Request {
 
 // SendMail sends a mail
 // success returns a nil or failure returns a err
-func (r *Request) SendMail() error {
+func (r *Request) SendMail(authe smtp.Auth, sender string) error {
 	mime := "MIME-version: 1.0;\nContent-Type: text/plain; charset=\"UTF-8\";\n\n"
 	subject := "Subject: " + r.subject + "!\n"
 	msg := []byte(subject + mime + "\n" + r.body)
@@ -57,4 +52,12 @@ func (r *Request) ParseTemplate(templateFileName string, data interface{}) error
 	}
 	r.body = buf.String()
 	return nil
+}
+
+func sender() string {
+	return "admin@company.com"
+}
+
+func authe() smtp.Auth {
+	return smtp.PlainAuth("", "", "", "")
 }

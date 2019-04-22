@@ -8,6 +8,7 @@ import (
 
 // GetLocation of the drivers by creating websockets
 func GetLocation(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	upgrader := newUpgrader()
 	driver, err := upgrader.Upgrade(w, r, nil) // later update response headers
 	if err != nil {
 		http.Error(w, http.StatusText(500), 500)

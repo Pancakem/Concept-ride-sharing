@@ -58,7 +58,7 @@ func (h *Hub) Read() {
 	cli := store.GetRedisClient()
 	if len(h.clients) > 0 {
 		for key, c := range h.clients {
-			c.conn.SetReadLimit(maxMessageSize)
+			c.conn.SetReadLimit(maxMessageSize())
 
 			for {
 				_, message, err := c.conn.ReadMessage()

@@ -8,10 +8,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var environments = map[string]string{
+func environments() map[string]string{
+	return map[string]string{
 	"production":  "prod.yaml",
 	"development": "pre.yaml",
 	"tests":       "tests.yaml",
+}
 }
 
 // Settings holds the data required to successfully start the app
@@ -35,7 +37,7 @@ func init() {
 
 // LoadSettingsByEnv returns a pointer to a settings struct
 func LoadSettingsByEnv(env string) *Settings {
-	content, err := ioutil.ReadFile(environments[env])
+	content, err := ioutil.ReadFile(environments()[env])
 	if err != nil {
 		common.Log.Println("Error while reading config file", err)
 		return nil

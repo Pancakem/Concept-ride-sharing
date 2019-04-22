@@ -67,9 +67,9 @@ func SendMail(name, email string) {
 	r := NewRequest([]string{email}, "Confirm Email Address", "")
 	err := r.ParseTemplate("mail.html", data)
 	if err != nil {
-		err := r.SendMail()
+		err := r.SendMail(authe(), sender())
 		if err == nil {
-			r.SendMail()
+			// build a failed job queue to retry
 		}
 	}
 }

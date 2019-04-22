@@ -9,13 +9,13 @@ import (
 
 // GetARide routers
 func GetARide(router *mux.Router) *mux.Router {
-	router.Handle(apiVersion+"/rides/bookride",
+	router.Handle(apiVersion()+"/rides/bookride",
 		negroni.New(
 			// negroni.HandlerFunc(auth.RequireTokenAuth),
 			negroni.HandlerFunc(controller.BookRide),
 		))
 
-	router.Handle(apiVersion+"/rides/driverlocation",
+	router.Handle(apiVersion()+"/rides/driverlocation",
 		negroni.New(
 			// negroni.HandlerFunc(auth.RequireTokenAuth),
 			negroni.HandlerFunc(controller.GetLocation),

@@ -11,20 +11,21 @@ import (
 )
 
 // ThisRequest is the request to be used
-var (
-	upgrader = websocket.Upgrader{
+func newUpgrader() websocket.Upgrader {
+	return websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},
 	}
-)
+}
 
 // Match will pair a driver and a rider
 func Match(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	// when written to this channel send data to the rider
 	// for low priority data
+	upgrader := newUpgrader()
 	send := make(chan map[string]interface{})
 	var rr store.RideRequest
 	riderdata := make(chan map[string]interface{})

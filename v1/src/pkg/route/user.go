@@ -9,7 +9,7 @@ import (
 
 // WorkUser avails the
 func WorkUser(router *mux.Router) *mux.Router {
-	router.Handle(apiVersion+"/riders",
+	router.Handle(apiVersion()+"/riders",
 		negroni.New(
 			negroni.HandlerFunc(auth.RequireTokenAuth),
 			negroni.HandlerFunc(controller.GetRiders),

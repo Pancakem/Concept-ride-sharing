@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const apiVersion = "/api/v1"
+func apiVersion() string { return "/api/v1" }
 
 // InitRouter adds all endpoints and return router
 func InitRouter() *mux.Router {

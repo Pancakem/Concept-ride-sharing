@@ -12,7 +12,7 @@ import (
 	"github.com/pancakem/rides/v1/src/pkg/store"
 )
 
-const tokenLifetime = 2e15
+func tokenLifetime() time.Duration { return 2e15 }
 
 var (
 	has  hash.Hash
@@ -96,7 +96,7 @@ func expiredTime(timestamp string) bool {
 	layout := "2006-01-02T15:04:05.000Z"
 	t, _ := time.Parse(layout, timestamp)
 	elapsed := time.Since(t)
-	if elapsed > tokenLifetime {
+	if elapsed > tokenLifetime() {
 		return false
 	}
 	return true
